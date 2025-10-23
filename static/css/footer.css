@@ -1,0 +1,35 @@
+ /* Footer Styling */
+    .footer {
+      display: flex;
+      justify-content: space-around;
+      background-color: #5D0832;
+      color: white;
+      padding: 40px 20px;
+    }
+
+    .footer-col {
+      width: 20%;
+    }
+
+    .footer-col h4 {
+      margin-top: 0;
+      font-size: 1.1em;
+    }
+    
+    .footer-col a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9em;
+    }
+    
+    .footer-col p, .footer-col ul {
+        font-size: 0.9em;
+    }
+
+    .social-icons a {
+      color: white;
+      margin-right: 15px;
+      font-size: 24px;
+    }

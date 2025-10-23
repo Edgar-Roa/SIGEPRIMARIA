@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar Documento - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <link rel="stylesheet" href="/static/css/registrar_documento.css">
+  <script src="/static/js/registrar_documento.js"></script>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="#">Registrar Documento</a>
+  </div>
+
+  <div class="main-wrapper">
+    
+    <!-- Header -->
+    <div class="page-header">
+      <h1>
+        <i class="fas fa-file-upload"></i>
+        Registrar Documento
+      </h1>
+      <p style="color: #666; margin-top: 0.5rem;">
+        Registre la entrega de un documento para <strong>{{ alumno.nombre_completo }}</strong>
+      </p>
+      <div class="breadcrumb">
+        <a href="{{ url_for('panel_tutor.panel_tutor') }}">Panel</a>
+        <span>/</span>
+        <a href="{{ url_for('documentos.ver_documentos', alumno_id=alumno.alumno_id) }}">Documentos</a>
+        <span>/</span>
+        <span>Registrar</span>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}exclamation-triangle{% endif %}"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Info Box -->
+    <div class="info-box">
+      <i class="fas fa-info-circle"></i>
+      <strong>Nota:</strong> Por ahora registramos que el documento fue entregado físicamente. Próximamente podrá subir archivos digitales.
+    </div>
+
+    {% if tipos_documentos %}
+    <!-- Formulario -->
+    <form method="POST" action="{{ url_for('documentos.registrar_documento_route', alumno_id=alumno.alumno_id) }}" id="formRegistro">
+      <div class="form-container">
+        
+        <!-- Selección de Documento -->
+        <div class="form-section">
+          <h3><i class="fas fa-file-alt"></i> Información del Documento</h3>
+          
+          <div class="form-group">
+            <label for="tipo_doc_id">
+              <i class="fas fa-list"></i>
+              Tipo de Documento <span class="required">*</span>
+            </label>
+            <select id="tipo_doc_id" name="tipo_doc_id" required>
+              <option value="">-- Seleccione un documento --</option>
+              {% for doc in tipos_documentos %}
+              <option value="{{ doc.tipo_doc_id }}" 
+                      data-descripcion="{{ doc.descripcion or '' }}"
+                      data-requerido="{{ doc.requerido }}">
+                {{ doc.nombre }} {% if doc.requerido %}(REQUERIDO){% endif %}
+              </option>
+              {% endfor %}
+            </select>
+            <small>Seleccione el documento que está entregando</small>
+          </div>
+
+          <!-- Info del documento seleccionado -->
+          <div id="docInfoCard" class="doc-info-card">
+            <strong>Descripción:</strong>
+            <p id="docDescripcion" style="margin-top: 0.5rem; color: #666;"></p>
+          </div>
+
+          <div class="form-group">
+            <label for="fecha_entrega">
+              <i class="fas fa-calendar"></i>
+              Fecha de Entrega <span class="required">*</span>
+            </label>
+            <input type="date" 
+                   id="fecha_entrega" 
+                   name="fecha_entrega" 
+                   required
+                   max="{{ max_date }}"
+                   value="{{ max_date }}">
+            <small>Fecha en que se entregó el documento</small>
+          </div>
+
+          <div class="form-group">
+            <label for="observaciones">
+              <i class="fas fa-comment"></i>
+              Observaciones (Opcional)
+            </label>
+            <textarea id="observaciones" 
+                      name="observaciones"
+                      placeholder="Ej: Original y copia entregadas, Documento verificado, etc."></textarea>
+            <small>Información adicional sobre el documento</small>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="form-actions">
+          <a href="{{ url_for('documentos.ver_documentos', alumno_id=alumno.alumno_id) }}" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancelar
+          </a>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Registrar Documento
+          </button>
+        </div>
+
+      </div>
+    </form>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-check-circle"></i>
+      <h3>Todos los documentos han sido entregados</h3>
+      <p>No hay documentos pendientes para este alumno</p>
+      <a href="{{ url_for('documentos.ver_documentos', alumno_id=alumno.alumno_id) }}" class="btn btn-primary" style="margin-top: 1rem;">
+        <i class="fas fa-arrow-left"></i> Ver Documentos
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="#">Participa</a></li>
+        <li><a href="#">Marco Jurídico</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Portal único de trámites e información</p>
+    </div>
+    <div class="footer-col">
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

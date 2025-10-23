@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revisar Inscripción - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page-header {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      color: #9d2449;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .breadcrumb {
+      display: flex;
+      gap: 0.5rem;
+      color: #999;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .breadcrumb a {
+      color: #9d2449;
+      text-decoration: none;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+    }
+
+    .info-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    .info-section h3 {
+      color: #9d2449;
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .info-label {
+      color: #666;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      color: #333;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      display: inline-block;
+      width: fit-content;
+    }
+
+    .status-pendiente {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-en_revision {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .status-aceptado {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-rechazado {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .action-panel {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 2rem;
+      height: fit-content;
+    }
+
+    .action-panel h3 {
+      color: #9d2449;
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #9d2449;
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    .btn-success {
+      background: #28a745;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-success:hover {
+      background: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-warning {
+      background: #ffc107;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-warning:hover {
+      background: #e0a800;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .alert-warning {
+      background: #fff3cd;
+      color: #856404;
+      border-left: 4px solid #ffc107;
+    }
+
+    .alert-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border-left: 4px solid #17a2b8;
+    }
+
+    #rechazoForm, #aceptarForm {
+      display: none;
+    }
+
+    #rechazoForm.show, #aceptarForm.show {
+      display: block;
+    }
+
+    @media (max-width: 1024px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .action-panel {
+        position: static;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+      <button class="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="#">Revisar Inscripción</a>
+  </div>
+
+  <div class="main-wrapper">
+    
+    <!-- Header -->
+    <div class="page-header">
+      <h1>
+        <i class="fas fa-file-alt"></i>
+        Revisar Solicitud de Inscripción #{{ inscripcion.inscripcion_id }}
+      </h1>
+      <div class="breadcrumb">
+        <a href="{{ url_for('panel_admin.panel_admin') }}">Panel</a>
+        <span>/</span>
+        <span>Revisar Inscripción</span>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <!-- Información Principal -->
+      <div>
+        <!-- Información del Alumno -->
+        <div class="info-section">
+          <h3><i class="fas fa-user-graduate"></i> Información del Alumno</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Nombre Completo</span>
+              <span class="info-value">{{ inscripcion.alumno_nombre }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">CURP</span>
+              <span class="info-value">{{ inscripcion.curp or 'No registrado' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Fecha de Nacimiento</span>
+              <span class="info-value">{{ inscripcion.fecha_nacimiento.strftime('%d/%m/%Y') if inscripcion.fecha_nacimiento else 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Edad</span>
+              <span class="info-value">{{ inscripcion.edad }} años</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información del Tutor -->
+        <div class="info-section">
+          <h3><i class="fas fa-user-tie"></i> Información del Tutor</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Nombre</span>
+              <span class="info-value">{{ inscripcion.tutor_nombre or 'No registrado' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Parentesco</span>
+              <span class="info-value">{{ inscripcion.parentesco or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Teléfono</span>
+              <span class="info-value">{{ inscripcion.tutor_telefono or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Correo</span>
+              <span class="info-value">{{ inscripcion.tutor_correo or 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información de la Inscripción -->
+        <div class="info-section">
+          <h3><i class="fas fa-school"></i> Detalles de la Inscripción</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Escuela</span>
+              <span class="info-value">{{ inscripcion.escuela_nombre }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">CCT</span>
+              <span class="info-value">{{ inscripcion.cct }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Ciclo Escolar</span>
+              <span class="info-value">{{ inscripcion.ciclo_nombre }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Grado Solicitado</span>
+              <span class="info-value">{{ inscripcion.grado_descripcion }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Fecha de Solicitud</span>
+              <span class="info-value">{{ inscripcion.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Estado Actual</span>
+              <span class="status-badge status-{{ inscripcion.status }}">
+                {{ inscripcion.status.replace('_', ' ') }}
+              </span>
+            </div>
+          </div>
+
+          {% if inscripcion.grupo_id %}
+          <div class="alert alert-info" style="margin-top: 1rem;">
+            <i class="fas fa-info-circle"></i>
+            <span>Grupo asignado: <strong>{{ inscripcion.nombre_grupo }}</strong></span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Panel de Acciones -->
+      <div>
+        <div class="action-panel">
+          <h3><i class="fas fa-clipboard-check"></i> Acciones</h3>
+
+          {% if inscripcion.status in ['pendiente', 'en_revision'] %}
+          
+          <!-- Botones de acción -->
+          <div id="actionButtons">
+            <button type="button" class="btn btn-success" onclick="mostrarFormulario('aceptar')">
+              <i class="fas fa-check"></i> Aceptar Inscripción
+            </button>
+            
+            <button type="button" class="btn btn-warning" onclick="ponerEnRevision()">
+              <i class="fas fa-search"></i> Poner en Revisión
+            </button>
+            
+            <button type="button" class="btn btn-danger" onclick="mostrarFormulario('rechazar')">
+              <i class="fas fa-times"></i> Rechazar Inscripción
+            </button>
+            
+            <a href="{{ url_for('panel_admin.panel_admin') }}" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Volver
+            </a>
+          </div>
+
+          <!-- Formulario para Aceptar -->
+          <form method="POST" action="{{ url_for('panel_admin.revisar_inscripcion', inscripcion_id=inscripcion.inscripcion_id) }}" id="aceptarForm">
+            <input type="hidden" name="accion" value="aceptar">
+            
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle"></i>
+              <span>Debes asignar un grupo al alumno</span>
+            </div>
+
+            <div class="form-group">
+              <label for="grupo_id">Asignar Grupo <span style="color: red;">*</span></label>
+              <select name="grupo_id" id="grupo_id" required>
+                <option value="">-- Seleccione un grupo --</option>
+                {% for grupo in grupos %}
+                <option value="{{ grupo.grupo_id }}">
+                  Grupo {{ grupo.nombre_grupo }} - {{ grupo.cupos_disponibles }} cupos disponibles
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">
+              <i class="fas fa-check"></i> Confirmar Aceptación
+            </button>
+            
+            <button type="button" class="btn btn-secondary" onclick="ocultarFormularios()">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+          </form>
+
+          <!-- Formulario para Rechazar -->
+          <form method="POST" action="{{ url_for('panel_admin.revisar_inscripcion', inscripcion_id=inscripcion.inscripcion_id) }}" id="rechazoForm">
+            <input type="hidden" name="accion" value="rechazar">
+            
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>Debes proporcionar un motivo de rechazo</span>
+            </div>
+
+            <div class="form-group">
+              <label for="motivo_rechazo">Motivo del Rechazo <span style="color: red;">*</span></label>
+              <textarea name="motivo_rechazo" id="motivo_rechazo" required placeholder="Explica por qué se rechaza esta solicitud..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-danger">
+              <i class="fas fa-times"></i> Confirmar Rechazo
+            </button>
+            
+            <button type="button" class="btn btn-secondary" onclick="ocultarFormularios()">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+          </form>
+
+          {% else %}
+          <!-- Si ya fue procesada -->
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <span>Esta inscripción ya fue procesada</span>
+          </div>
+
+          {% if inscripcion.status == 'rechazado' and inscripcion.motivo_rechazo %}
+          <div class="info-section" style="padding: 1rem; margin-top: 1rem;">
+            <h4 style="color: #dc3545; margin-bottom: 0.5rem;">
+              <i class="fas fa-exclamation-circle"></i> Motivo de Rechazo
+            </h4>
+            <p style="color: #666;">{{ inscripcion.motivo_rechazo }}</p>
+          </div>
+          {% endif %}
+
+          <a href="{{ url_for('panel_admin.panel_admin') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al Panel
+          </a>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="#">Participa</a></li>
+        <li><a href="#">Marco Jurídico</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Portal único de trámites e información</p>
+    </div>
+    <div class="footer-col">
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function mostrarFormulario(tipo) {
+      // Ocultar botones
+      document.getElementById('actionButtons').style.display = 'none';
+      
+      // Mostrar formulario correspondiente
+      if (tipo === 'aceptar') {
+        document.getElementById('aceptarForm').classList.add('show');
+      } else if (tipo === 'rechazar') {
+        document.getElementById('rechazoForm').classList.add('show');
+      }
+    }
+
+    function ocultarFormularios() {
+      document.getElementById('actionButtons').style.display = 'block';
+      document.getElementById('aceptarForm').classList.remove('show');
+      document.getElementById('rechazoForm').classList.remove('show');
+    }
+
+    function ponerEnRevision() {
+      if (confirm('¿Estás seguro de poner esta inscripción en revisión?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for("panel_admin.revisar_inscripcion", inscripcion_id=inscripcion.inscripcion_id) }}';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'accion';
+        input.value = 'revisar';
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+      }
+    }
+  </script>
+
+</body>
+</html>

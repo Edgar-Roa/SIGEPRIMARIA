@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestionar Grupos - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-wrapper {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .page-header {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-header h1 {
+      color: #9d2449;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-primary {
+      background: #9d2449;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #7a1a38;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    .grupos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .grupo-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      border-left: 4px solid #9d2449;
+    }
+    .grupo-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    .grupo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .grupo-nombre {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #9d2449;
+    }
+    .grupo-info {
+      display: grid;
+      gap: 0.8rem;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .info-label {
+      color: #666;
+      font-weight: 600;
+    }
+    .info-value {
+      color: #333;
+      font-weight: 500;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.3s ease;
+    }
+    .empty-state {
+      background: white;
+      padding: 4rem 2rem;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    .empty-state i {
+      font-size: 5rem;
+      color: #ccc;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="#">Gestionar Grupos</a>
+  </div>
+
+  <div class="main-wrapper">
+    <div class="page-header">
+      <div>
+        <h1><i class="fas fa-users-cog"></i> Gestionar Grupos</h1>
+        <p style="color: #666; margin-top: 0.5rem;">{{ escuela.nombre }}</p>
+      </div>
+      <div style="display: flex; gap: 1rem;">
+        <a href="{{ url_for('panel_director.crear_grupo_route') }}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Nuevo Grupo
+        </a>
+        <a href="{{ url_for('panel_director.panel_director') }}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i> Volver
+        </a>
+      </div>
+    </div>
+
+    {% if grupos %}
+    <div class="grupos-grid">
+      {% for grupo in grupos %}
+      <div class="grupo-card">
+        <div class="grupo-header">
+          <div class="grupo-nombre">{{ grupo.nombre_grupo }}</div>
+          <a href="{{ url_for('panel_director.ver_grupo', grupo_id=grupo.grupo_id) }}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+            <i class="fas fa-eye"></i>
+          </a>
+        </div>
+        
+        <div class="grupo-info">
+          <div class="info-row">
+            <span class="info-label">Grado:</span>
+            <span class="info-value">{{ grupo.grado_descripcion }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Docente:</span>
+            <span class="info-value">{{ grupo.docente_nombre or 'Sin asignar' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Alumnos:</span>
+            <span class="info-value">{{ grupo.alumnos_inscritos }} / {{ grupo.cupo }}</span>
+          </div>
+          <div class="info-row" style="border: none;">
+            <span class="info-label">Disponibles:</span>
+            <span class="info-value" style="color: {% if grupo.cupos_disponibles > 5 %}#28a745{% elif grupo.cupos_disponibles > 0 %}#ffc107{% else %}#dc3545{% endif %};">
+              {{ grupo.cupos_disponibles }}
+            </span>
+          </div>
+        </div>
+
+        <div class="progress-bar">
+          {% set porcentaje = (grupo.alumnos_inscritos / grupo.cupo * 100) if grupo.cupo > 0 else 0 %}
+          <div class="progress-fill" style="width: {{ porcentaje }}%; background: {% if porcentaje >= 90 %}#dc3545{% elif porcentaje >= 70 %}#ffc107{% else %}#28a745{% endif %};"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-users-slash"></i>
+      <h3>No hay grupos creados</h3>
+      <p>Comienza creando grupos para organizar a los alumnos</p>
+      <a href="{{ url_for('panel_director.crear_grupo_route') }}" class="btn btn-primary" style="margin-top: 1.5rem;">
+        <i class="fas fa-plus"></i> Crear Primer Grupo
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+  </footer>
+</body>
+</html>

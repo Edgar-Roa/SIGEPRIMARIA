@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle del Grupo - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-wrapper {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .page-header {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    .page-header h1 {
+      color: #9d2449;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .breadcrumb {
+      display: flex;
+      gap: 0.5rem;
+      color: #999;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .breadcrumb a {
+      color: #9d2449;
+      text-decoration: none;
+    }
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .info-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      border-left: 4px solid #9d2449;
+    }
+    .info-card h3 {
+      color: #9d2449;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .info-item:last-child {
+      border-bottom: none;
+    }
+    .info-label {
+      color: #666;
+      font-weight: 600;
+    }
+    .info-value {
+      color: #333;
+      font-weight: 500;
+    }
+    .progress-section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background: #e0e0e0;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 15px;
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+    .content-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    .section-header h2 {
+      color: #9d2449;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+    .btn-success:hover {
+      background: #218838;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead {
+      background: #f8f9fa;
+    }
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 2px solid #dee2e6;
+    }
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #dee2e6;
+    }
+    tr:hover {
+      background: #f8f9fa;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+    }
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+    @media (max-width: 768px) {
+      .info-cards {
+        grid-template-columns: 1fr;
+      }
+      table {
+        font-size: 0.85rem;
+      }
+      th, td {
+        padding: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="#">Detalle del Grupo</a>
+  </div>
+
+  <div class="main-wrapper">
+    
+    <!-- Header -->
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="{{ url_for('panel_director.panel_director') }}">Panel</a>
+        <span>/</span>
+        <a href="{{ url_for('panel_director.gestionar_grupos') }}">Grupos</a>
+        <span>/</span>
+        <span>{{ grupo.nombre_grupo }}</span>
+      </div>
+      <h1>
+        <i class="fas fa-users"></i>
+        Grupo {{ grupo.nombre_grupo }} - {{ grupo.grado_descripcion }}
+      </h1>
+      <p style="color: #666; margin-top: 0.5rem;">
+        <strong>{{ escuela.nombre }}</strong> | Ciclo: {{ grupo.ciclo_nombre }}
+      </p>
+      <a href="{{ url_for('panel_director.gestionar_grupos') }}" class="btn btn-secondary" style="margin-top: 1rem;">
+        <i class="fas fa-arrow-left"></i> Volver a Grupos
+      </a>
+    </div>
+
+    <!-- Información del Grupo -->
+    <div class="info-cards">
+      <div class="info-card">
+        <h3><i class="fas fa-info-circle"></i> Información General</h3>
+        <div class="info-item">
+          <span class="info-label">Grado:</span>
+          <span class="info-value">{{ grupo.grado_descripcion }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Grupo:</span>
+          <span class="info-value">{{ grupo.nombre_grupo }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Ciclo:</span>
+          <span class="info-value">{{ grupo.ciclo_nombre }}</span>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h3><i class="fas fa-chalkboard-teacher"></i> Docente</h3>
+        <div class="info-item">
+          <span class="info-label">Profesor:</span>
+          <span class="info-value">{{ grupo.docente_nombre or 'Sin asignar' }}</span>
+        </div>
+        {% if grupo.docente_nombre %}
+        <div class="info-item">
+          <span class="info-label">Estado:</span>
+          <span class="info-value" style="color: #28a745;">✓ Asignado</span>
+        </div>
+        {% else %}
+        <div class="info-item">
+          <span class="info-label">Estado:</span>
+          <span class="info-value" style="color: #ffc107;">⚠ Pendiente</span>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="info-card">
+        <h3><i class="fas fa-users"></i> Capacidad</h3>
+        <div class="info-item">
+          <span class="info-label">Cupo Total:</span>
+          <span class="info-value">{{ grupo.cupo }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Inscritos:</span>
+          <span class="info-value">{{ grupo.alumnos_inscritos }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Disponibles:</span>
+          <span class="info-value" style="color: {% if (grupo.cupo - grupo.alumnos_inscritos) > 5 %}#28a745{% elif (grupo.cupo - grupo.alumnos_inscritos) > 0 %}#ffc107{% else %}#dc3545{% endif %};">
+            {{ grupo.cupo - grupo.alumnos_inscritos }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de Progreso -->
+    <div class="progress-section">
+      <div class="progress-header">
+        <h3 style="color: #9d2449; font-size: 1.2rem;">
+          <i class="fas fa-chart-bar"></i> Ocupación del Grupo
+        </h3>
+        <span style="font-size: 1.1rem; font-weight: 600; color: #333;">
+          {{ grupo.alumnos_inscritos }} / {{ grupo.cupo }} alumnos
+        </span>
+      </div>
+      <div class="progress-bar">
+        {% set porcentaje = (grupo.alumnos_inscritos / grupo.cupo * 100) if grupo.cupo > 0 else 0 %}
+        <div class="progress-fill" style="width: {{ porcentaje }}%; background: {% if porcentaje >= 90 %}#dc3545{% elif porcentaje >= 70 %}#ffc107{% else %}#28a745{% endif %};">
+          {{ "%.0f"|format(porcentaje) }}%
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Alumnos -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2>
+          <i class="fas fa-clipboard-list"></i>
+          Lista de Alumnos ({{ alumnos|length }})
+        </h2>
+        <button onclick="window.print()" class="btn btn-success">
+          <i class="fas fa-print"></i> Imprimir Lista
+        </button>
+      </div>
+
+      {% if alumnos %}
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre Completo</th>
+              <th>CURP</th>
+              <th>Edad</th>
+              <th>Tutor Responsable</th>
+              <th>Teléfono</th>
+              <th>Fecha Inscripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for alumno in alumnos %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td><strong>{{ alumno.nombre_completo }}</strong></td>
+              <td>{{ alumno.curp or 'N/A' }}</td>
+              <td>{{ alumno.edad }} años</td>
+              <td>{{ alumno.tutor_nombre or 'N/A' }}</td>
+              <td>{{ alumno.tutor_telefono or 'N/A' }}</td>
+              <td>{{ alumno.fecha_solicitud.strftime('%d/%m/%Y') if alumno.fecha_solicitud else 'N/A' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <i class="fas fa-user-slash"></i>
+        <h3>No hay alumnos inscritos</h3>
+        <p>Este grupo aún no tiene alumnos asignados</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Portal único de trámites e información</p>
+    </div>
+    <div class="footer-col">
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <style media="print">
+    @page {
+      size: landscape;
+      margin: 1cm;
+    }
+    body {
+      background: white;
+    }
+    .header, .subheader, .footer, .btn, .page-header a, .breadcrumb {
+      display: none !important;
+    }
+    .main-wrapper {
+      padding: 0;
+      max-width: 100%;
+    }
+    .page-header {
+      box-shadow: none;
+      border-bottom: 2px solid #333;
+    }
+    table {
+      font-size: 0.8rem;
+    }
+    th, td {
+      padding: 0.3rem;
+    }
+  </style>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }   
+    /* Main Content Styling */
+    .main-content {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 50px;
+      background-color: #f5f5f5;
+    }
+
+    .card {
+      width: 300px;
+      border: 2px solid #a87e41;
+      border-radius: 10px;
+      text-align: center;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card-icon {
+      padding: 30px;
+    }
+
+    .card-icon img {
+      width: 150px;
+      height: auto;
+      fill: #a87e41;
+    }
+
+    .card-text {
+      width: 100%;
+      background-color: #a87e41;
+      color: white;
+      padding: 15px 0;
+      font-weight: bold;
+    }
+
+   

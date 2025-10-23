@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Inscripciones - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page-header {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-content h1 {
+      color: #9d2449;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-content p {
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .breadcrumb {
+      display: flex;
+      gap: 0.5rem;
+      color: #999;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .breadcrumb a {
+      color: #9d2449;
+      text-decoration: none;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: #9d2449;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #7a1a38;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(157, 36, 73, 0.3);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+
+    .filters-section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      color: #333;
+      font-size: 0.9rem;
+    }
+
+    .filter-group select {
+      padding: 0.6rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    .inscripciones-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .inscripcion-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+
+    .inscripcion-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .alumno-info h3 {
+      color: #333;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .alumno-info p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-pendiente {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-en_revision {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .status-aceptado {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-rechazado {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .card-body {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .info-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .info-section h4 {
+      color: #9d2449;
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .info-item i {
+      color: #9d2449;
+      width: 20px;
+    }
+
+    .info-item strong {
+      color: #333;
+      margin-left: 0.3rem;
+    }
+
+    .motivo-rechazo {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f8d7da;
+      border-left: 4px solid #dc3545;
+      border-radius: 6px;
+    }
+
+    .motivo-rechazo h5 {
+      color: #721c24;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .motivo-rechazo p {
+      color: #721c24;
+      font-size: 0.9rem;
+    }
+
+    .empty-state {
+      background: white;
+      padding: 4rem 2rem;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .empty-state i {
+      font-size: 5rem;
+      color: #ccc;
+      margin-bottom: 1.5rem;
+    }
+
+    .empty-state h3 {
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+      color: #999;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .card-body {
+        grid-template-columns: 1fr;
+      }
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+      <button class="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="#">Mis Inscripciones</a>
+  </div>
+
+  <div class="main-wrapper">
+    
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-content">
+        <h1>
+          <i class="fas fa-file-alt"></i>
+          Mis Solicitudes de Inscripción
+        </h1>
+        <p>Consulta el estado de todas tus solicitudes de inscripción</p>
+        <div class="breadcrumb">
+          <a href="{{ url_for('panel_tutor.panel_tutor') }}">Panel</a>
+          <span>/</span>
+          <span>Mis Inscripciones</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="{{ url_for('inscripcion.inscripcion') }}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Nueva Inscripción
+        </a>
+        <a href="{{ url_for('panel_tutor.panel_tutor') }}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i> Volver
+        </a>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="filterStatus">Filtrar por Estado</label>
+          <select id="filterStatus" onchange="filterInscripciones()">
+            <option value="">Todos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="en_revision">En Revisión</option>
+            <option value="aceptado">Aceptado</option>
+            <option value="rechazado">Rechazado</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filterAlumno">Filtrar por Alumno</label>
+          <select id="filterAlumno" onchange="filterInscripciones()">
+            <option value="">Todos</option>
+            {% for inscripcion in inscripciones %}
+              <option value="{{ inscripcion.alumno_nombre }}">{{ inscripcion.alumno_nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Inscripciones -->
+    {% if inscripciones %}
+    <div class="inscripciones-grid" id="inscripcionesContainer">
+      {% for inscripcion in inscripciones %}
+      <div class="inscripcion-card" 
+           data-status="{{ inscripcion.status }}" 
+           data-alumno="{{ inscripcion.alumno_nombre }}">
+        
+        <div class="card-header">
+          <div class="alumno-info">
+            <h3>
+              <i class="fas fa-user-graduate"></i>
+              {{ inscripcion.alumno_nombre }}
+            </h3>
+            <p>Folio: #{{ inscripcion.inscripcion_id }} | Fecha: {{ inscripcion.fecha_solicitud.strftime('%d/%m/%Y %H:%M') }}</p>
+          </div>
+          <span class="status-badge status-{{ inscripcion.status }}">
+            {{ inscripcion.status.replace('_', ' ') }}
+          </span>
+        </div>
+
+        <div class="card-body">
+          <!-- Información de la Escuela -->
+          <div class="info-section">
+            <h4><i class="fas fa-school"></i> Escuela</h4>
+            <div class="info-item">
+              <i class="fas fa-building"></i>
+              <span><strong>{{ inscripcion.escuela_nombre }}</strong></span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-id-card"></i>
+              <span>CCT: <strong>{{ inscripcion.cct }}</strong></span>
+            </div>
+          </div>
+
+          <!-- Información Académica -->
+          <div class="info-section">
+            <h4><i class="fas fa-graduation-cap"></i> Información Académica</h4>
+            <div class="info-item">
+              <i class="fas fa-calendar-alt"></i>
+              <span>Ciclo: <strong>{{ inscripcion.ciclo_nombre }}</strong></span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-book"></i>
+              <span>Grado: <strong>{{ inscripcion.grado }}</strong></span>
+            </div>
+            {% if inscripcion.grupo %}
+            <div class="info-item">
+              <i class="fas fa-users"></i>
+              <span>Grupo: <strong>{{ inscripcion.grupo }}</strong></span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Motivo de Rechazo (si aplica) -->
+        {% if inscripcion.status == 'rechazado' and inscripcion.motivo_rechazo %}
+        <div class="motivo-rechazo">
+          <h5><i class="fas fa-exclamation-circle"></i> Motivo de Rechazo</h5>
+          <p>{{ inscripcion.motivo_rechazo }}</p>
+        </div>
+        {% endif %}
+
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-folder-open"></i>
+      <h3>No tienes solicitudes de inscripción</h3>
+      <p>Aún no has realizado ninguna solicitud de inscripción</p>
+      <a href="{{ url_for('inscripcion.inscripcion') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Crear Primera Solicitud
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="#">Participa</a></li>
+        <li><a href="#">Marco Jurídico</a></li>
+        <li><a href="#">Plataforma Nacional de Transparencia</a></li>
+        <li><a href="#">Alerta</a></li>
+        <li><a href="#">Denuncia</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Es el portal único de trámites, información y participación ciudadana. <a href="#">Leer más</a></p>
+      <ul>
+        <li><a href="#">Portal de datos abiertos</a></li>
+        <li><a href="#">Declaración de accesibilidad</a></li>
+        <li><a href="#">Términos y condiciones</a></li>
+        <li><a href="#">Política de seguridad</a></li>
+        <li><a href="#">Mapa de sitio</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Denuncia contra servidores públicos</h4>
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function filterInscripciones() {
+      const statusFilter = document.getElementById('filterStatus').value;
+      const alumnoFilter = document.getElementById('filterAlumno').value;
+      const cards = document.querySelectorAll('.inscripcion-card');
+      
+      cards.forEach(card => {
+        const cardStatus = card.dataset.status;
+        const cardAlumno = card.dataset.alumno;
+        
+        let showCard = true;
+        
+        if (statusFilter && cardStatus !== statusFilter) {
+          showCard = false;
+        }
+        
+        if (alumnoFilter && cardAlumno !== alumnoFilter) {
+          showCard = false;
+        }
+        
+        card.style.display = showCard ? 'block' : 'none';
+      });
+    }
+  </script>
+
+</body>
+</html>

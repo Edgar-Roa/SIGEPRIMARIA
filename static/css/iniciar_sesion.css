@@ -1,0 +1,134 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: url("/static/imagenes/fondo.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.content-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  position: relative;
+}
+
+.blur-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  backdrop-filter: blur(2px);
+  z-index: 1;
+}
+
+.login-box {
+  position: relative;
+  z-index: 2;
+  background: #8c0022;
+  border-radius: 30px;
+  padding: 50px;
+  width: 500px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-box img {
+  width: 350px;
+  margin-bottom: 50px;
+}
+
+.login-box h2 {
+  color: #fff;
+  margin-bottom: 30px;
+}
+
+.login-box label {
+  font-size: 25px;
+  color: white;
+  font-weight: bold;
+  margin-bottom: 8px;
+  align-self: flex-start;
+}
+
+.login-box label i {
+  font-size: 25px;
+  margin-right: 18px;
+  color: #ccc;
+}
+
+.login-box input[type="text"],
+.login-box input[type="password"],
+.login-box input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 25px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.5em;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  color: #8c0022;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.5em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.login-box button:hover {
+  background: #d1a84f;
+  color: #fff;
+}
+
+.registro-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.registro-link:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.texto-blanco {
+  text-align: center;
+  font-size: 25px;
+  color: #fff;
+}
+
+.flash-messages {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+  z-index: 3;
+  position: relative;
+}
+
+.flash-messages li {
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.flash-messages li.success {
+  background-color: #28a745;
+  color: white;
+}
+
+.flash-messages li.error {
+  background-color: #dc3545;
+  color: white;
+}

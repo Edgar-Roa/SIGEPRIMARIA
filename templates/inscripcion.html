@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva Inscripción - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page-header {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      color: #9d2449;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .page-header p {
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .breadcrumb {
+      display: flex;
+      gap: 0.5rem;
+      color: #999;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .breadcrumb a {
+      color: #9d2449;
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .alert {
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .alert-warning {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      color: #856404;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      color: #155724;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      border-left: 4px solid #dc3545;
+      color: #721c24;
+    }
+
+    .alert-info {
+      background: #d1ecf1;
+      border-left: 4px solid #17a2b8;
+      color: #0c5460;
+    }
+
+    .form-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
+    }
+
+    .form-section h3 {
+      color: #9d2449;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .form-group label .required {
+      color: #dc3545;
+      margin-left: 0.2rem;
+    }
+
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus {
+      outline: none;
+      border-color: #9d2449;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .info-card {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid #9d2449;
+    }
+
+    .info-card h4 {
+      color: #9d2449;
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: #666;
+      font-weight: 600;
+    }
+
+    .info-value {
+      color: #333;
+    }
+
+    .btn {
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: #9d2449;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #7a1a38;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(157, 36, 73, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 2px solid #f0f0f0;
+    }
+
+    .eligibility-check {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .eligibility-check.show {
+      display: block;
+    }
+
+    .eligibility-check.success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .eligibility-check.error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .school-card {
+      padding: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .school-card:hover {
+      border-color: #9d2449;
+      box-shadow: 0 3px 10px rgba(157, 36, 73, 0.2);
+    }
+
+    .school-card.selected {
+      border-color: #9d2449;
+      background: #f8f9fa;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+      <button class="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="#">Nueva Inscripción</a>
+  </div>
+
+  <div class="main-wrapper">
+    <!-- Header -->
+    <div class="page-header">
+      <h1>
+        <i class="fas fa-file-signature"></i>
+        Nueva Solicitud de Inscripción
+      </h1>
+      <p>Complete el formulario para solicitar la inscripción de un alumno</p>
+      <div class="breadcrumb">
+        <a href="{{ url_for('panel_tutor.panel_tutor') }}">Panel</a>
+        <span>/</span>
+        <span>Nueva Inscripción</span>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Información del Ciclo -->
+    {% if ciclo_activo %}
+    <div class="info-card" style="margin-bottom: 2rem;">
+      <h4><i class="fas fa-calendar-alt"></i> Ciclo Escolar Activo</h4>
+      <div class="info-item">
+        <span class="info-label">Ciclo:</span>
+        <span class="info-value">{{ ciclo_activo.nombre }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Periodo:</span>
+        <span class="info-value">{{ ciclo_activo.fecha_inicio }} - {{ ciclo_activo.fecha_fin }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Estado:</span>
+        <span class="info-value">
+          {% if ciclo_activo.inscripciones_abiertas %}
+            <span style="color: #28a745; font-weight: bold;">✓ Inscripciones Abiertas</span>
+          {% else %}
+            <span style="color: #dc3545; font-weight: bold;">✗ Inscripciones Cerradas</span>
+          {% endif %}
+        </span>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Formulario -->
+    {% if ciclo_activo and ciclo_activo.inscripciones_abiertas %}
+    <form method="POST" action="{{ url_for('inscripcion.inscripcion') }}" id="inscripcionForm">
+      <div class="form-container">
+        
+        <!-- Sección: Seleccionar Alumno -->
+        <div class="form-section">
+          <h3><i class="fas fa-user-graduate"></i> Seleccionar Alumno</h3>
+          
+          {% if alumnos %}
+          <div class="form-group">
+            <label for="alumno_id">Alumno <span class="required">*</span></label>
+            <select name="alumno_id" id="alumno_id" required>
+              <option value="">-- Seleccione un alumno --</option>
+              {% for alumno in alumnos %}
+              <option value="{{ alumno.alumno_id }}">
+                {{ alumno.nombre_completo }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          {% else %}
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>No tienes alumnos registrados. <a href="{{ url_for('registro.registro') }}">Registrar nuevo alumno</a></span>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Sección: Seleccionar Grado -->
+        <div class="form-section">
+          <h3><i class="fas fa-graduation-cap"></i> Seleccionar Grado</h3>
+          
+          <div class="form-group">
+            <label for="grado_id">Grado Escolar <span class="required">*</span></label>
+            <select name="grado_id" id="grado_id" required>
+              <option value="">-- Seleccione un grado --</option>
+              {% for grado in grados %}
+              <option value="{{ grado.grado_id }}">
+                {{ grado.descripcion }} ({{ grado.nivel }}°)
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- Sección: Seleccionar Escuela -->
+        <div class="form-section">
+          <h3><i class="fas fa-school"></i> Seleccionar Escuela</h3>
+          
+          {% if escuelas %}
+          <div class="form-group">
+            <label for="escuela_id">Escuela <span class="required">*</span></label>
+            <select name="escuela_id" id="escuela_id" required>
+              <option value="">-- Seleccione una escuela --</option>
+              {% for escuela in escuelas %}
+              <option value="{{ escuela.escuela_id }}" 
+                      data-cupos="{{ escuela.cupos_disponibles }}"
+                      data-turno="{{ escuela.turno }}"
+                      data-municipio="{{ escuela.municipio }}"
+                      {% if escuela.cupos_disponibles <= 0 %}disabled{% endif %}>
+                {{ escuela.nombre }} - {{ escuela.cct }}
+                {% if escuela.cupos_disponibles > 0 %}
+                  ({{ escuela.cupos_disponibles }} cupos disponibles)
+                {% else %}
+                  (SIN CUPOS)
+                {% endif %}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Información de la escuela seleccionada -->
+          <div id="escuelaInfo" style="display: none;" class="info-card" style="margin-top: 1rem;">
+            <h4><i class="fas fa-info-circle"></i> Información de la Escuela</h4>
+            <div class="info-item">
+              <span class="info-label">CCT:</span>
+              <span class="info-value" id="info_cct">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Municipio:</span>
+              <span class="info-value" id="info_municipio">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Turno:</span>
+              <span class="info-value" id="info_turno">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Cupos Disponibles:</span>
+              <span class="info-value" id="info_cupos">-</span>
+            </div>
+          </div>
+          {% else %}
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>No hay escuelas disponibles en este momento.</span>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Mensaje de elegibilidad -->
+        <div id="eligibilityMessage" class="eligibility-check"></div>
+
+        <!-- Botones de acción -->
+        <div class="form-actions">
+          <a href="{{ url_for('panel_tutor.panel_tutor') }}" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancelar
+          </a>
+          <button type="submit" class="btn btn-primary" id="btnSubmit" {% if not alumnos or not escuelas %}disabled{% endif %}>
+            <i class="fas fa-paper-plane"></i> Enviar Solicitud
+          </button>
+        </div>
+
+      </div>
+    </form>
+    {% else %}
+    <div class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Las inscripciones no están disponibles en este momento.</span>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="#">Participa</a></li>
+        <li><a href="#">Marco Jurídico</a></li>
+        <li><a href="#">Plataforma Nacional de Transparencia</a></li>
+        <li><a href="#">Alerta</a></li>
+        <li><a href="#">Denuncia</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Es el portal único de trámites, información y participación ciudadana. <a href="#">Leer más</a></p>
+      <ul>
+        <li><a href="#">Portal de datos abiertos</a></li>
+        <li><a href="#">Declaración de accesibilidad</a></li>
+        <li><a href="#">Términos y condiciones</a></li>
+        <li><a href="#">Política de seguridad</a></li>
+        <li><a href="#">Mapa de sitio</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Denuncia contra servidores públicos</h4>
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mostrar información de la escuela seleccionada
+    document.getElementById('escuela_id').addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      const escuelaInfo = document.getElementById('escuelaInfo');
+      
+      if (this.value) {
+        document.getElementById('info_cct').textContent = selectedOption.textContent.split(' - ')[1].split(' ')[0];
+        document.getElementById('info_municipio').textContent = selectedOption.dataset.municipio || 'N/A';
+        document.getElementById('info_turno').textContent = selectedOption.dataset.turno || 'N/A';
+        document.getElementById('info_cupos').textContent = selectedOption.dataset.cupos || '0';
+        escuelaInfo.style.display = 'block';
+        
+        // Verificar elegibilidad si hay alumno seleccionado
+        checkEligibility();
+      } else {
+        escuelaInfo.style.display = 'none';
+      }
+    });
+
+    // Verificar elegibilidad cuando cambia el alumno
+    document.getElementById('alumno_id').addEventListener('change', checkEligibility);
+
+    // Función para verificar elegibilidad
+    function checkEligibility() {
+      const alumnoId = document.getElementById('alumno_id').value;
+      const escuelaId = document.getElementById('escuela_id').value;
+      const eligibilityDiv = document.getElementById('eligibilityMessage');
+      const submitBtn = document.getElementById('btnSubmit');
+      
+      if (!alumnoId || !escuelaId) {
+        eligibilityDiv.classList.remove('show');
+        return;
+      }
+      
+      // Llamada AJAX para verificar elegibilidad
+      fetch(`/verificar-elegibilidad/${alumnoId}/${escuelaId}`)
+        .then(response => response.json())
+        .then(data => {
+          eligibilityDiv.textContent = data.mensaje;
+          eligibilityDiv.classList.add('show');
+          
+          if (data.puede_inscribirse) {
+            eligibilityDiv.classList.remove('error');
+            eligibilityDiv.classList.add('success');
+            submitBtn.disabled = false;
+          } else {
+            eligibilityDiv.classList.remove('success');
+            eligibilityDiv.classList.add('error');
+            submitBtn.disabled = true;
+          }
+        })
+        .catch(error => {
+          console.error('Error al verificar elegibilidad:', error);
+        });
+    }
+
+    // Validación del formulario antes de enviar
+    document.getElementById('inscripcionForm').addEventListener('submit', function(e) {
+      const alumnoId = document.getElementById('alumno_id').value;
+      const escuelaId = document.getElementById('escuela_id').value;
+      const gradoId = document.getElementById('grado_id').value;
+      
+      if (!alumnoId || !escuelaId || !gradoId) {
+        e.preventDefault();
+        alert('Por favor complete todos los campos requeridos');
+        return false;
+      }
+    });
+  </script>
+
+</body>
+</html>

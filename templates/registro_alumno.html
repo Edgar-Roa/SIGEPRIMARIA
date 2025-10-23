@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar Alumno - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <link rel="stylesheet" href="/static/css/registro_alumno.css">
+  <script src="/static/js/registro_alumno.js"></script>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+      <button class="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="{{url_for('panel_tutor.panel_tutor')}}">Panel de Tutor</a>
+    <a href="#">Registrar Alumno</a>
+  </div>
+
+  <div class="main-wrapper">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>
+        <i class="fas fa-user-graduate"></i>
+        Registrar Nuevo Alumno
+      </h1>
+      <a href="{{url_for('panel_tutor.panel_tutor')}}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver
+      </a>
+    </div>
+
+    <!-- Mensajes Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Info Box -->
+    <div class="info-box">
+      <i class="fas fa-info-circle"></i>
+      <strong>Tutor responsable:</strong> {{ tutor.nombre }} {{ tutor.apellido_paterno }} {{ tutor.apellido_materno }}
+    </div>
+
+    <!-- Formulario -->
+    <form action="{{url_for('registro_alumno.registro_alumno')}}" method="POST" id="formRegistro">
+      <div class="form-container">
+        <!-- Sección 1: Datos Personales -->
+        <h2 class="section-title">
+          <i class="fas fa-user"></i>
+          Datos Personales del Alumno
+        </h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre">
+              <i class="fas fa-user"></i>
+              Nombre(s) <span class="required">*</span>
+            </label>
+            <input type="text" id="nombre" name="nombre" class="form-control" required 
+                   placeholder="Ej: Juan Carlos" maxlength="100">
+          </div>
+
+          <div class="form-group">
+            <label for="apellido_paterno">
+              <i class="fas fa-user"></i>
+              Apellido Paterno <span class="required">*</span>
+            </label>
+            <input type="text" id="apellido_paterno" name="apellido_paterno" class="form-control" required 
+                   placeholder="Ej: García" maxlength="100">
+          </div>
+
+          <div class="form-group">
+            <label for="apellido_materno">
+              <i class="fas fa-user"></i>
+              Apellido Materno <span class="required">*</span>
+            </label>
+            <input type="text" id="apellido_materno" name="apellido_materno" class="form-control" required 
+                   placeholder="Ej: López" maxlength="100">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="curp">
+              <i class="fas fa-id-card"></i>
+              CURP <span class="required">*</span>
+            </label>
+            <input type="text" id="curp" name="curp" class="form-control" required 
+                   placeholder="18 caracteres" maxlength="18" style="text-transform: uppercase;">
+            <span class="help-text">Ingrese el CURP del alumno (18 caracteres)</span>
+            <span class="error-text" id="curp-error"></span>
+            <span class="success-text" id="curp-success">✓ CURP disponible</span>
+          </div>
+
+          <div class="form-group">
+            <label for="fecha_nacimiento">
+              <i class="fas fa-calendar"></i>
+              Fecha de Nacimiento <span class="required">*</span>
+            </label>
+            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" required>
+            <span class="help-text" id="edad-info"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="sexo">
+              <i class="fas fa-venus-mars"></i>
+              Sexo <span class="required">*</span>
+            </label>
+            <select id="sexo" name="sexo" class="form-control" required>
+              <option value="">Seleccionar...</option>
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Sección 2: Domicilio -->
+        <h2 class="section-title">
+          <i class="fas fa-map-marker-alt"></i>
+          Domicilio
+        </h2>
+
+        <div class="form-row">
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label for="direccion">
+              <i class="fas fa-home"></i>
+              Dirección Completa
+            </label>
+            <input type="text" id="direccion" name="direccion" class="form-control" 
+                   placeholder="Calle, número, colonia">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="municipio">
+              <i class="fas fa-city"></i>
+              Municipio/Alcaldía
+            </label>
+            <input type="text" id="municipio" name="municipio" class="form-control" 
+                   placeholder="Ej: Cuauhtémoc">
+          </div>
+
+          <div class="form-group">
+            <label for="entidad">
+              <i class="fas fa-map"></i>
+              Entidad Federativa
+            </label>
+            <input type="text" id="entidad" name="entidad" class="form-control" 
+                   placeholder="Ej: Ciudad de México">
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">
+              <i class="fas fa-phone"></i>
+              Teléfono de Contacto
+            </label>
+            <input type="tel" id="telefono" name="telefono" class="form-control" 
+                   placeholder="10 dígitos" maxlength="10">
+          </div>
+        </div>
+
+        <!-- Sección 3: Información Académica -->
+        <h2 class="section-title">
+          <i class="fas fa-graduation-cap"></i>
+          Información Académica
+        </h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nacionalidad">
+              <i class="fas fa-flag"></i>
+              Nacionalidad
+            </label>
+            <input type="text" id="nacionalidad" name="nacionalidad" class="form-control" 
+                   value="Mexicana">
+          </div>
+
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="escuela_procedencia">
+              <i class="fas fa-school"></i>
+              Escuela de Procedencia
+            </label>
+            <input type="text" id="escuela_procedencia" name="escuela_procedencia" class="form-control" 
+                   placeholder="Nombre de la escuela anterior (si aplica)">
+            <span class="help-text">Solo si cambia de escuela</span>
+          </div>
+        </div>
+
+        <!-- Sección 4: Inscripción (Opcional) -->
+        <h2 class="section-title">
+          <i class="fas fa-clipboard-list"></i>
+          Solicitar Inscripción (Opcional)
+        </h2>
+
+        <div class="info-box">
+          <i class="fas fa-lightbulb"></i>
+          Puedes completar estos datos ahora o hacerlo después desde el panel de tutor
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="escuela_id">
+              <i class="fas fa-school"></i>
+              Escuela
+            </label>
+            <select id="escuela_id" name="escuela_id" class="form-control">
+              <option value="">Seleccionar después...</option>
+              {% for escuela in escuelas %}
+              <option value="{{ escuela.escuela_id }}">
+                {{ escuela.nombre }} - {{ escuela.municipio }} ({{ escuela.turno }})
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="grado_id">
+              <i class="fas fa-layer-group"></i>
+              Grado a Inscribir
+            </label>
+            <select id="grado_id" name="grado_id" class="form-control">
+              <option value="">Seleccionar después...</option>
+              {% for grado in grados %}
+              <option value="{{ grado.grado_id }}">
+                {{ grado.nivel }}° - {{ grado.descripcion }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- Sección 4: Documentos del Alumno -->
+        <h2 class="section-title">
+          <i class="fas fa-file-upload"></i>
+          Documentos del Alumno
+        </h2>
+
+        <div class="document-section">
+          <h3><i class="fas fa-id-card"></i> Acta de Nacimiento</h3>
+          <div class="file-upload-box" id="uploadAreaAlumno1">
+            <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+            <div class="upload-text">Arrastra o haz clic para subir</div>
+            <div class="upload-hint">PDF, JPG, PNG (Máx. 10 MB)</div>
+            <input type="file" id="fileInputAlumno1" name="doc_alumno_acta" class="file-input" 
+                   accept=".pdf,.jpg,.jpeg,.png">
+          </div>
+          <div class="files-list" id="filesListAlumno1"></div>
+          <div class="file-counter" id="fileCounterAlumno1" style="display: none;"></div>
+        </div>
+
+        <div class="document-section">
+          <h3><i class="fas fa-clipboard"></i> Cartilla de Vacunación</h3>
+          <div class="file-upload-box" id="uploadAreaAlumno2">
+            <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+            <div class="upload-text">Arrastra o haz clic para subir</div>
+            <div class="upload-hint">PDF, JPG, PNG (Máx. 10 MB)</div>
+            <input type="file" id="fileInputAlumno2" name="doc_alumno_cartilla" class="file-input" 
+                   accept=".pdf,.jpg,.jpeg,.png">
+          </div>
+          <div class="files-list" id="filesListAlumno2"></div>
+          <div class="file-counter" id="fileCounterAlumno2" style="display: none;"></div>
+        </div>
+
+        <!-- Sección 5: Documentos del Tutor/Padre -->
+        <h2 class="section-title">
+          <i class="fas fa-file-upload"></i>
+          Documentos del Tutor/Padre
+        </h2>
+
+        <div class="document-section">
+          <h3><i class="fas fa-id-card"></i> Identificación del Tutor</h3>
+          <div class="file-upload-box" id="uploadAreaTutor1">
+            <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+            <div class="upload-text">Arrastra o haz clic para subir</div>
+            <div class="upload-hint">PDF, JPG, PNG (Máx. 10 MB)</div>
+            <input type="file" id="fileInputTutor1" name="doc_tutor_identificacion" class="file-input" 
+                   accept=".pdf,.jpg,.jpeg,.png">
+          </div>
+          <div class="files-list" id="filesListTutor1"></div>
+          <div class="file-counter" id="fileCounterTutor1" style="display: none;"></div>
+        </div>
+
+        <div class="document-section">
+          <h3><i class="fas fa-file-contract"></i> Comprobante de Domicilio</h3>
+          <div class="file-upload-box" id="uploadAreaTutor2">
+            <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+            <div class="upload-text">Arrastra o haz clic para subir</div>
+            <div class="upload-hint">PDF, JPG, PNG (Máx. 10 MB)</div>
+            <input type="file" id="fileInputTutor2" name="doc_tutor_domicilio" class="file-input" 
+                   accept=".pdf,.jpg,.jpeg,.png">
+          </div>
+          <div class="files-list" id="filesListTutor2"></div>
+          <div class="file-counter" id="fileCounterTutor2" style="display: none;"></div>
+        </div>
+
+        <div class="document-section">
+          <h3><i class="fas fa-file-alt"></i> Autorización de Tutor</h3>
+          <div class="file-upload-box" id="uploadAreaTutor3">
+            <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+            <div class="upload-text">Arrastra o haz clic para subir</div>
+            <div class="upload-hint">PDF, JPG, PNG (Máx. 10 MB)</div>
+            <input type="file" id="fileInputTutor3" name="doc_tutor_autorizacion" class="file-input" 
+                   accept=".pdf,.jpg,.jpeg,.png">
+          </div>
+          <div class="files-list" id="filesListTutor3"></div>
+          <div class="file-counter" id="fileCounterTutor3" style="display: none;"></div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="form-actions">
+          <a href="{{url_for('panel_tutor.panel_tutor')}}" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancelar
+          </a>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-check"></i> Registrar Alumno
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="#">Participa</a></li>
+        <li><a href="#">Marco Jurídico</a></li>
+        <li><a href="#">Plataforma Nacional de Transparencia</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Es el portal único de trámites, información y participación ciudadana.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </footer>
+
+
+</body>
+</html>

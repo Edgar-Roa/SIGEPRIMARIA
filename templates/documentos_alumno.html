@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentos del Alumno - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <link rel="stylesheet" href="/static/css/documentos_alumno.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="#">Documentos</a>
+  </div>
+
+  <div class="main-wrapper">
+    
+    <!-- Header -->
+    <div class="page-header">
+      <h1>
+        <i class="fas fa-folder-open"></i>
+        Documentos del Alumno
+      </h1>
+      <div class="breadcrumb">
+        <a href="{{ url_for('panel_tutor.panel_tutor') }}">Panel</a>
+        <span>/</span>
+        <span>Documentos</span>
+      </div>
+      <div class="alumno-badge">
+        <div>
+          <strong style="font-size: 1.1rem;">{{ alumno.nombre_completo }}</strong>
+          <p style="color: #666; margin-top: 0.3rem;">
+            <i class="fas fa-user"></i> Alumno
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <a href="{{ url_for('documentos.registrar_documento_route', alumno_id=alumno.alumno_id) }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Registrar Documento
+          </a>
+          <a href="{{ url_for('panel_tutor.panel_tutor') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}exclamation-triangle{% endif %}"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Progreso General -->
+    <div class="progress-card">
+      <div class="progress-header">
+        <h2><i class="fas fa-chart-line"></i> Progreso de Documentación</h2>
+        <div class="progress-stats">
+          <div class="stat-item">
+            <div class="stat-number">{{ resumen.entregados }}</div>
+            <div class="stat-label">Entregados</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ resumen.pendientes }}</div>
+            <div class="stat-label">Pendientes</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ resumen.total }}</div>
+            <div class="stat-label">Total</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="progress-bar-container">
+        {% set color = '#28a745' if resumen.porcentaje >= 80 else '#ffc107' if resumen.porcentaje >= 50 else '#dc3545' %}
+        <div class="progress-bar-fill" style="width: {{ resumen.porcentaje }}%; background: {{ color }};">
+          {{ "%.0f"|format(resumen.porcentaje) }}%
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Documentos -->
+    <h2 style="color: #9d2449; margin-bottom: 1.5rem; font-size: 1.5rem;">
+      <i class="fas fa-clipboard-list"></i> Documentos Requeridos
+    </h2>
+
+    {% if checklist %}
+    <div class="documentos-grid">
+      {% for doc in checklist %}
+      <div class="documento-card {{ 'entregado' if doc.estado == 'Entregado' else 'pendiente' }}">
+        <div class="documento-info">
+          <div class="documento-nombre">
+            <i class="fas fa-file-alt"></i>
+            {{ doc.tipo_documento }}
+            {% if doc.requerido %}
+            <span class="requerido-badge">REQUERIDO</span>
+            {% endif %}
+          </div>
+          
+          {% if doc.descripcion %}
+          <div class="documento-detalle">
+            <i class="fas fa-info-circle"></i> {{ doc.descripcion }}
+          </div>
+          {% endif %}
+          
+          {% if doc.estado == 'Entregado' %}
+          <div class="documento-detalle">
+            <i class="fas fa-calendar"></i> Registrado: {{ doc.fecha_subida.strftime('%d/%m/%Y') if doc.fecha_subida else 'N/A' }}
+          </div>
+          {% if doc.observaciones %}
+          <div class="documento-detalle">
+            <i class="fas fa-comment"></i> {{ doc.observaciones }}
+          </div>
+          {% endif %}
+          {% endif %}
+        </div>
+        
+        <div class="documento-acciones">
+          {% if doc.estado == 'Entregado' %}
+            <span class="status-badge status-{{ doc.status|lower if doc.status else 'recibido' }}">
+              {{ doc.status or 'Recibido' }}
+            </span>
+          {% else %}
+            <a href="{{ url_for('documentos.registrar_documento_route', alumno_id=alumno.alumno_id) }}" 
+               class="btn btn-primary">
+              <i class="fas fa-upload"></i> Entregar
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <h3>No hay documentos configurados</h3>
+      <p>Contacte al administrador del sistema</p>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="#">Participa</a></li>
+        <li><a href="#">Marco Jurídico</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Portal único de trámites e información</p>
+    </div>
+    <div class="footer-col">
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

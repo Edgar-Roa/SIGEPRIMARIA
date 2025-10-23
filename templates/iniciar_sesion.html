@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/iniciar_sesion.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+      <button class="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+    </nav>
+  </header>
+
+  <div class="subheader">
+    <a href="{{ url_for('inicio.inicio') }}">SIGEPRIMARIA</a>
+    <a href="{{ url_for('quienes_somos.quienes_somos') }}">¿Quiénes somos?</a>
+  </div>
+
+  <main class="content-area">
+    <div class="blur-bg"></div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form class="login-box" method="POST" action="{{ url_for('iniciar_sesion.iniciar_sesion') }}">
+      <img src="/static/imagenes/logo.png" alt="Sige Primaria">
+      
+      <label for="correo"><i class="fas fa-user"></i> Correo</label>
+      <input type="text" id="correo" name="correo" placeholder="Correo" required>
+      
+      <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
+      <input type="password" id="password" name="password" placeholder="Contraseña" required>
+      
+      <p class="texto-blanco">
+        ¿No tienes cuenta?
+        <a href="{{ url_for('registro.registro') }}" class="registro-link">Regístrate aquí</a>
+      </p>
+      
+      <button type="submit">Iniciar Sesión</button>
+    </form>
+  </main>
+
+</body>
+</html>

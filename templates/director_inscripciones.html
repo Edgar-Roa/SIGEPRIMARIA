@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscripciones - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-wrapper {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .page-header {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    .page-header h1 {
+      color: #9d2449;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .school-badge {
+      background: #f8f9fa;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 0.5rem;
+      border-left: 4px solid #9d2449;
+    }
+    .filters-section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 0.6rem 1.2rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+      text-decoration: none;
+      color: #333;
+    }
+    .filter-btn:hover {
+      border-color: #9d2449;
+      color: #9d2449;
+    }
+    .filter-btn.active {
+      background: #9d2449;
+      color: white;
+      border-color: #9d2449;
+    }
+    .search-box {
+      padding: 0.6rem 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      min-width: 250px;
+    }
+    .search-box:focus {
+      outline: none;
+      border-color: #9d2449;
+    }
+    .stats-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .stat-mini {
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      flex: 1;
+      min-width: 150px;
+      text-align: center;
+    }
+    .stat-mini h4 {
+      font-size: 1.8rem;
+      color: #9d2449;
+      margin-bottom: 0.3rem;
+    }
+    .stat-mini p {
+      color: #666;
+      font-size: 0.85rem;
+    }
+    .table-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead {
+      background: #f8f9fa;
+    }
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 2px solid #dee2e6;
+      white-space: nowrap;
+    }
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #dee2e6;
+    }
+    tr:hover {
+      background: #f8f9fa;
+    }
+    .status-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+    .status-pendiente {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-en_revision {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+    .status-aceptado {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-rechazado {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+    .btn-info:hover {
+      background: #138496;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      margin-bottom: 1rem;
+    }
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+    }
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+    @media (max-width: 768px) {
+      .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-btn, .search-box {
+        width: 100%;
+      }
+      table {
+        font-size: 0.85rem;
+      }
+      th, td {
+        padding: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+      <button class="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="#">Inscripciones</a>
+  </div>
+
+  <div class="main-wrapper">
+    
+    <!-- Header -->
+    <div class="page-header">
+      <h1>
+        <i class="fas fa-file-alt"></i>
+        Inscripciones de la Escuela
+      </h1>
+      <div class="school-badge">
+        <strong>{{ escuela.nombre }}</strong> | CCT: {{ escuela.cct }}
+      </div>
+      <a href="{{ url_for('panel_director.panel_director') }}" class="btn btn-secondary" style="margin-top: 1rem;">
+        <i class="fas fa-arrow-left"></i> Volver al Panel
+      </a>
+    </div>
+
+    <!-- Estadísticas Mini -->
+    <div class="stats-row">
+      <div class="stat-mini">
+        <h4>{{ estadisticas.total_solicitudes or 0 }}</h4>
+        <p>Total Solicitudes</p>
+      </div>
+      <div class="stat-mini">
+        <h4>{{ estadisticas.pendientes or 0 }}</h4>
+        <p>Pendientes</p>
+      </div>
+      <div class="stat-mini">
+        <h4>{{ estadisticas.en_revision or 0 }}</h4>
+        <p>En Revisión</p>
+      </div>
+      <div class="stat-mini">
+        <h4>{{ estadisticas.aceptados or 0 }}</h4>
+        <p>Aceptados</p>
+      </div>
+      <div class="stat-mini">
+        <h4>{{ estadisticas.rechazados or 0 }}</h4>
+        <p>Rechazados</p>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+      <span style="font-weight: 600; color: #333;">Filtrar:</span>
+      <a href="{{ url_for('panel_director.ver_inscripciones') }}" 
+         class="filter-btn {% if not filtro_actual %}active{% endif %}">
+        Todas
+      </a>
+      <a href="{{ url_for('panel_director.ver_inscripciones', status='pendiente') }}" 
+         class="filter-btn {% if filtro_actual == 'pendiente' %}active{% endif %}">
+        Pendientes
+      </a>
+      <a href="{{ url_for('panel_director.ver_inscripciones', status='en_revision') }}" 
+         class="filter-btn {% if filtro_actual == 'en_revision' %}active{% endif %}">
+        En Revisión
+      </a>
+      <a href="{{ url_for('panel_director.ver_inscripciones', status='aceptado') }}" 
+         class="filter-btn {% if filtro_actual == 'aceptado' %}active{% endif %}">
+        Aceptados
+      </a>
+      <a href="{{ url_for('panel_director.ver_inscripciones', status='rechazado') }}" 
+         class="filter-btn {% if filtro_actual == 'rechazado' %}active{% endif %}">
+        Rechazados
+      </a>
+      
+      <input type="text" id="searchBox" class="search-box" placeholder="🔍 Buscar por nombre de alumno...">
+    </div>
+
+    <!-- Tabla de Inscripciones -->
+    <div class="table-container">
+      {% if inscripciones %}
+      <table id="inscripcionesTable">
+        <thead>
+          <tr>
+            <th>Folio</th>
+            <th>Alumno</th>
+            <th>CURP</th>
+            <th>Grado</th>
+            <th>Grupo</th>
+            <th>Tutor</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for insc in inscripciones %}
+          <tr data-alumno="{{ insc.alumno_nombre|lower }}">
+            <td><strong>#{{ insc.inscripcion_id }}</strong></td>
+            <td>{{ insc.alumno_nombre }}</td>
+            <td>{{ insc.curp or 'N/A' }}</td>
+            <td>{{ insc.grado_descripcion }}</td>
+            <td>{{ insc.nombre_grupo or '-' }}</td>
+            <td>{{ insc.tutor_nombre or 'N/A' }}</td>
+            <td>{{ insc.fecha_solicitud.strftime('%d/%m/%Y') }}</td>
+            <td>
+              <span class="status-badge status-{{ insc.status }}">
+                {{ insc.status.replace('_', ' ') }}
+              </span>
+            </td>
+            <td>
+              <a href="{{ url_for('panel_admin.detalle_inscripcion', inscripcion_id=insc.inscripcion_id) }}" 
+                 class="btn btn-info">
+                <i class="fas fa-eye"></i> Ver
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>No hay inscripciones</h3>
+        <p>No se encontraron inscripciones con los filtros aplicados</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="#">Participa</a></li>
+        <li><a href="#">Marco Jurídico</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Portal único de trámites e información</p>
+    </div>
+    <div class="footer-col">
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Búsqueda en tiempo real
+    document.getElementById('searchBox').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('#inscripcionesTable tbody tr');
+      
+      rows.forEach(row => {
+        const alumno = row.dataset.alumno;
+        if (alumno.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

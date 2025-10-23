@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEPRIMARIA</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url("/static/imagenes/fondo.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #5D0832;
+        }
+        .logo img {
+            height: 60px;
+        }
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+        .main-nav li {
+            margin-left: 20px;
+        }
+        .main-nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+        }
+        .search-icon {
+            width: 24px;
+            height: 24px;
+        }
+        .sub-header {
+            background-color: #d1a84f;
+            padding: 10px 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .sub-header p, .sub-header a {
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+        .content-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            position: relative;
+        }
+        .blur-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            backdrop-filter: blur(2px);
+            z-index: 1;
+        }
+        .login-box {
+            position: relative;
+            z-index: 2;
+            background: #8c0022;
+            border-radius: 30px;
+            padding: 40px 30px 30px 30px;
+            width: 350px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .login-box img {
+            width: 120px;
+            margin-bottom: 10px;
+        }
+        .login-box h2 {
+            color: #fff;
+            margin-bottom: 25px;
+        }
+        .login-box label {
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 5px;
+            align-self: flex-start;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 18px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 10px;
+            background: #fff;
+            color: #8c0022;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-box button:hover {
+            background: #d1a84f;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">
+            <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México">
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#">Trámites</a></li>
+                <li><a href="#">Gobierno</a></li>
+                <li>
+                    <a href="#">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <div class="sub-header">
+        <a href="{{'inicio.inicio'}}">SIGEPRIMARIA</a>
+        <a href="{{'quienes_somos.quienes_somos'}}">¿Quiénes somos?</a>
+    </div>
+    <main class="content-area">
+        <div class="blur-bg"></div>
+        <form class="login-box">
+            <img src="/static/imagenes/logo.png" alt="Sige Primaria">
+            <label for="alcaldia">Alcaldía</label>
+            <input type="text" id="alcaldia" name="alcaldia" placeholder="Alcaldía">
+            <label for="estado">Estado</label>
+            <input type="text" id="estado" name="estado" placeholder="Estado">
+            <button type="submit">Buscar</button>
+        </form>
+    </main>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .dashboard-header {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-header h1 {
+      color: #9d2449;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: white;
+    }
+
+    .stat-icon.pending {
+      background: linear-gradient(135deg, #ffa500 0%, #ff6347 100%);
+    }
+
+    .stat-icon.review {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .stat-icon.accepted {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .stat-icon.rejected {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .stat-info h3 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-info p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .content-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .section-header h2 {
+      color: #9d2449;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: #9d2449;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #7a1a38;
+      transform: translateY(-2px);
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f8f9fa;
+    }
+
+    th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    .status-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+
+    .status-pendiente {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-en_revision {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .status-aceptado {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-rechazado {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: #138496;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 0.85rem;
+      }
+
+      th, td {
+        padding: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+      <button class="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="#">Panel de Administración</a>
+  </div>
+
+  <div class="main-wrapper">
+    
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h1>
+        <i class="fas fa-user-shield"></i>
+        Panel de {% if rol == 'sep_admin' %}Administración SEP{% else %}Director{% endif %}
+      </h1>
+      <p>Gestiona y revisa las solicitudes de inscripción</p>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}" style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px; background: {% if category == 'success' %}#d4edda{% elif category == 'error' %}#f8d7da{% else %}#d1ecf1{% endif %};">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon pending">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.pendientes or 0 }}</h3>
+          <p>Pendientes</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon review">
+          <i class="fas fa-search"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.en_revision or 0 }}</h3>
+          <p>En Revisión</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon accepted">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.aceptados or 0 }}</h3>
+          <p>Aceptados</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon rejected">
+          <i class="fas fa-times-circle"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.rechazados or 0 }}</h3>
+          <p>Rechazados</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inscripciones Pendientes -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2>
+          <i class="fas fa-list"></i>
+          Solicitudes Pendientes de Revisión
+        </h2>
+        <a href="{{ url_for('panel_admin.gestionar_inscripciones') }}" class="btn btn-primary btn-sm">
+          <i class="fas fa-th-list"></i> Ver Todas las Inscripciones
+        </a>
+      </div>
+
+      {% if inscripciones %}
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Folio</th>
+              <th>Alumno</th>
+              <th>Escuela</th>
+              <th>Grado</th>
+              <th>Tutor</th>
+              <th>Fecha Solicitud</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for insc in inscripciones %}
+            <tr>
+              <td><strong>#{{ insc.inscripcion_id }}</strong></td>
+              <td>{{ insc.alumno_nombre }}</td>
+              <td>{{ insc.escuela_nombre }}</td>
+              <td>{{ insc.grado_descripcion }}</td>
+              <td>{{ insc.tutor_nombre or 'N/A' }}</td>
+              <td>{{ insc.fecha_solicitud.strftime('%d/%m/%Y') }}</td>
+              <td>
+                <span class="status-badge status-{{ insc.status }}">
+                  {{ insc.status.replace('_', ' ') }}
+                </span>
+              </td>
+              <td>
+                <a href="{{ url_for('panel_admin.detalle_inscripcion', inscripcion_id=insc.inscripcion_id) }}" 
+                   class="btn btn-info btn-sm">
+                  <i class="fas fa-eye"></i> Revisar
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>No hay solicitudes pendientes</h3>
+        <p>Todas las solicitudes han sido revisadas</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="#">Participa</a></li>
+        <li><a href="#">Marco Jurídico</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Portal único de trámites e información</p>
+    </div>
+    <div class="footer-col">
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

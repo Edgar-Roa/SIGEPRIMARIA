@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEPRIMARIA</title>
+    <link rel="stylesheet" href="/static/css/quienes_somos.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">
+            <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México">
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="#">Trámites</a></li>
+                <li><a href="#">Gobierno</a></li>
+                <li><a href="#">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="sub-header">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="{{url_for('quienes_somos.quienes_somos')}}">¿Quienes somos?</a>
+    </div>
+
+    <main class="content-area">
+        <div class="overlay">
+            <h1>SISTEMA DE GESTIÓN ESCOLAR– PRIMARIA</h1>
+            <h2>¿Quiénes somos?</h2>
+
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-button">
+                        Conoce SIGEPRIMARIA
+                        <span class="plus-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>Primasigue es una plataforma digital diseñada para realizar inscripciones en línea en nivel primaria. Nuestro propósito es modernizar y simplificar el proceso de registro escolar, brindando a los padres de familia una alternativa rápida, confiable y segura, y a las escuelas una herramienta eficiente para la gestión de sus alumnos.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-button">
+                        Servicios de información
+                        <span class="plus-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>Aquí encontrarás toda la información relevante sobre el sistema, guías de usuario, preguntas frecuentes y soporte técnico para asegurar una experiencia fluida.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-button">
+                        Modelo operativo del PRIMASIGUE
+                        <span class="plus-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>Detalle sobre cómo funciona PRIMASIGUE, desde el registro de usuarios hasta la confirmación de inscripciones y la gestión de datos escolares.</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-button">
+                        Términos de uso
+                        <span class="plus-icon">+</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>Conoce las políticas de privacidad, las condiciones de servicio y los derechos y responsabilidades al utilizar la plataforma PRIMASIGUE.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const accordionButtons = document.querySelectorAll('.accordion-button');
+
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const plusIcon = this.querySelector('.plus-icon');
+                    
+                    // Comprueba si el acordeón ya está abierto
+                    const isAlreadyActive = this.classList.contains('active');
+
+                    // Cierra todos los acordeones
+                    accordionButtons.forEach(otherButton => {
+                        otherButton.classList.remove('active');
+                        otherButton.nextElementSibling.classList.remove('active');
+                        otherButton.querySelector('.plus-icon').textContent = '+';
+                    });
+
+                    // Si el acordeón no estaba activo, ábrelo
+                    if (!isAlreadyActive) {
+                        this.classList.add('active');
+                        content.classList.add('active');
+                        plusIcon.textContent = '-';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

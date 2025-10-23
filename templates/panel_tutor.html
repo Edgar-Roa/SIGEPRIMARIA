@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Tutor - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <link rel="stylesheet" href="/static/css/panel_tutor.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+      <button class="search-btn">
+        <i class="fas fa-search"></i>
+      </button>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="#">Panel de Tutor</a>
+  </div>
+
+  <div class="main-wrapper">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <div class="welcome-section">
+        <h1>Bienvenido, {{ tutor.nombre }} {{ tutor.apellido_paterno }}</h1>
+        <p>Gestiona las inscripciones y documentos de tus hijos</p>
+      </div>
+      <div class="quick-actions">
+        <a href="{{ url_for('inscripcion.inscripcion') }}" class="btn btn-primary">
+          <i class="fas fa-file-signature"></i> Nueva Inscripción
+        </a>
+        <a href="{{ url_for('registro_alumno.registro_alumno') }}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Registrar Alumno
+        </a>
+        <a href="{{ url_for('inscripcion.mis_inscripciones') }}" class="btn btn-secondary">
+          <i class="fas fa-list"></i> Mis Inscripciones
+        </a>
+        <a href="{{ url_for('inicio.inicio') }}" class="btn btn-secondary">
+          <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </a>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <i class="fas fa-child"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.total_alumnos }}</h3>
+          <p>Alumnos Registrados</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.inscripciones_activas }}</h3>
+          <p>Inscripciones Activas</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.documentos_pendientes }}</h3>
+          <p>Documentos Pendientes</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon red">
+          <i class="fas fa-bell"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.notificaciones }}</h3>
+          <p>Notificaciones</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alumnos Section -->
+    <div class="content-section">
+      <div class="section-header">
+        <h2>
+          <i class="fas fa-users"></i>
+          Mis Alumnos
+        </h2>
+      </div>
+
+      {% if hijos %}
+        {% for hijo in hijos %}
+        <div class="alumno-card">
+          <div class="alumno-header">
+    <div class="alumno-nombre">
+        <i class="fas fa-user-graduate"></i>
+        {{ hijo.nombre_completo }}
+    </div>
+    <div class="alumno-actions-group">
+        <a href="{{ url_for('documentos.ver_documentos', alumno_id=hijo.alumno_id) }}" 
+           class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1rem; margin-right: 0.5rem;">
+            <i class="fas fa-eye"></i> Revisar Documentos
+        </a>
+
+        <a href="{{ url_for('documentos.registrar_documento_route', alumno_id=hijo.alumno_id) }}" 
+           class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+            <i class="fas fa-upload"></i> Subir Documento
+        </a>
+    </div>
+</div>
+
+          <div class="alumno-info">
+            <div class="info-item">
+              <i class="fas fa-school"></i>
+              <span>Grado: {{ hijo.grado if hijo.grado else 'No asignado' }}</span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-users"></i>
+              <span>Grupo: {{ hijo.grupo if hijo.grupo else 'No asignado' }}</span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-clock"></i>
+              <span>Turno: {{ hijo.turno if hijo.turno else 'No asignado' }}</span>
+            </div>
+          </div>
+
+          {% if documentos[hijo.alumno_id] %}
+          <div class="documentos-progress">
+            <div class="progress-header">
+              <span><strong>Progreso de Documentos</strong></span>
+              <span>
+                {% set total = documentos[hijo.alumno_id]|length %}
+                {% set validados = documentos[hijo.alumno_id]|selectattr('estado', 'equalto', 'validado')|list|length %}
+                {{ validados }}/{{ total }}
+              </span>
+            </div>
+            <div class="progress-bar">
+              {% set porcentaje = (validados / total * 100) if total > 0 else 0 %}
+              <div class="progress-fill" style="width: {{ porcentaje }}%"></div>
+            </div>
+
+            <div class="documentos-list">
+              {% for doc in documentos[hijo.alumno_id] %}
+              <div class="documento-item">
+                <i class="fas fa-file-alt" style="color: #9d2449;"></i>
+                <span style="flex: 1;">{{ doc.nombre }}</span>
+                <span class="status-badge status-{{ doc.estado|lower }}">
+                  {{ doc.estado }}
+                </span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="fas fa-user-plus"></i>
+          <h3>No hay alumnos registrados</h3>
+          <p>Comienza registrando a tu primer alumno</p>
+          <a href="{{ url_for('registro_alumno.registro_alumno') }}" class="btn btn-primary" style="margin-top: 1rem;">
+            <i class="fas fa-plus"></i> Registrar Primer Alumno
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  
+
+  <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="#">Participa</a></li>
+        <li><a href="#">Marco Jurídico</a></li>
+        <li><a href="#">Plataforma Nacional de Transparencia</a></li>
+        <li><a href="#">Alerta</a></li>
+        <li><a href="#">Denuncia</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Es el portal único de trámites, información y participación ciudadana. <a href="#">Leer más</a></p>
+      <ul>
+        <li><a href="#">Portal de datos abiertos</a></li>
+        <li><a href="#">Declaración de accesibilidad</a></li>
+        <li><a href="#">Términos y condiciones</a></li>
+        <li><a href="#">Política de seguridad</a></li>
+        <li><a href="#">Mapa de sitio</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Denuncia contra servidores públicos</h4>
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

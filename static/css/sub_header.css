@@ -1,0 +1,13 @@
+/* Sub-header (SIGEPRIMARIA) */
+    .subheader {
+      background-color: #a87e41;
+      color: white;
+      padding: 10px 50px;
+      display: flex;
+      gap: 30px;
+    }
+
+    .subheader a {
+      color: white;
+      text-decoration: none;
+    }

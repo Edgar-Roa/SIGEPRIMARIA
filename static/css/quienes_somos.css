@@ -1,0 +1,165 @@
+<style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url("/static/imagenes/fondo.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #5D0832;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .logo img {
+            height: 50px;
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+        .main-nav li {
+            margin-left: 20px;
+        }
+
+        .main-nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .search-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .sub-header {
+            background-color: #d1a84f;
+            padding: 10px 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .sub-header a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .sub-header p {
+            font-weight: bold;
+        }
+
+        .content-area {
+            /* El fondo ya está en body, aquí solo overlay */
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.4);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            color: #fff;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .overlay h1, .overlay h2 {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        
+        .overlay h1 {
+            font-size: 2.5em;
+        }
+        
+        .overlay h2 {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+        }
+
+        .accordion {
+            width: 80%;
+            max-width: 700px;
+            margin-top: 20px;
+        }
+
+        .accordion-item {
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: #8c0022;
+            overflow: hidden;
+        }
+
+        .accordion-button {
+            width: 100%;
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+        
+        .accordion-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .plus-icon {
+            font-size: 24px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-content {
+            background-color: #8c0022;
+            color: #fff;
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            text-align: left;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        
+        .accordion-content.active {
+            max-height: 200px;
+            padding: 20px;
+        }
+    </style>
