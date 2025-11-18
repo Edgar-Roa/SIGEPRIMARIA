@@ -5,6 +5,12 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      background: url("/static/imagenes/fondo.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+    
     }
     .main-wrapper {
       flex: 1;

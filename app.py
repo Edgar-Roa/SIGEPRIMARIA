@@ -3,11 +3,11 @@ from dotenv import load_dotenv
 import os
 
 # 🔐 Cargar variables de entorno
-load_dotenv()
+#load_dotenv()
 
 # 🚀 Inicializar aplicación Flask
-app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'clave_por_defecto_segura')
+application = Flask(__name__)
+application.secret_key = os.getenv('SECRET_KEY', 'clave_por_defecto_segura')
 
 # 📦 Importar Blueprints
 from routes.inicio import inicio_bp
@@ -23,18 +23,18 @@ from routes.inscripcion import inscripcion_bp
 from routes.panel_admin import panel_admin_bp
 
 # 🔗 Registrar Blueprints
-app.register_blueprint(inicio_bp)
-app.register_blueprint(iniciar_sesion_bp)
-app.register_blueprint(registro_bp)
-app.register_blueprint(registro_alumno_bp)
-app.register_blueprint(panel_tutor_bp)
-app.register_blueprint(panel_director_bp)
-app.register_blueprint(documentos_bp)  # ✅ NUEVO
-app.register_blueprint(quienes_somos_bp)
-app.register_blueprint(ubicacion_bp)
-app.register_blueprint(inscripcion_bp)
-app.register_blueprint(panel_admin_bp)
+application.register_blueprint(inicio_bp)
+application.register_blueprint(iniciar_sesion_bp)
+application.register_blueprint(registro_bp)
+application.register_blueprint(registro_alumno_bp)
+application.register_blueprint(panel_tutor_bp)
+application.register_blueprint(panel_director_bp)
+application.register_blueprint(documentos_bp)  # ✅ NUEVO
+application.register_blueprint(quienes_somos_bp)
+application.register_blueprint(ubicacion_bp)
+application.register_blueprint(inscripcion_bp)
+application.register_blueprint(panel_admin_bp)
 
 # 🏁 Ejecutar servidor
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
+    application.run(debug=True, host="0.0.0.0", port=int(os.getenv("PORT", 5000)))

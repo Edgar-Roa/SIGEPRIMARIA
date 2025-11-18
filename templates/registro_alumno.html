@@ -9,8 +9,6 @@
   <link rel="stylesheet" href="/static/css/sub_header.css">
   <link rel="stylesheet" href="/static/css/footer.css">
   <link rel="stylesheet" href="/static/css/registro_alumno.css">
-  <script src="/static/js/registro_alumno.js"></script>
-
 </head>
 <body>
 
@@ -64,7 +62,7 @@
     </div>
 
     <!-- Formulario -->
-    <form action="{{url_for('registro_alumno.registro_alumno')}}" method="POST" id="formRegistro">
+    <form action="{{url_for('registro_alumno.registro_alumno')}}" method="POST" id="formRegistro" enctype="multipart/form-data">
       <div class="form-container">
         <!-- Sección 1: Datos Personales -->
         <h2 class="section-title">
@@ -111,7 +109,7 @@
                    placeholder="18 caracteres" maxlength="18" style="text-transform: uppercase;">
             <span class="help-text">Ingrese el CURP del alumno (18 caracteres)</span>
             <span class="error-text" id="curp-error"></span>
-            <span class="success-text" id="curp-success">✓ CURP disponible</span>
+            <span class="success-text" id="curp-success" style="display:none;">✓ CURP disponible</span>
           </div>
 
           <div class="form-group">
@@ -368,6 +366,9 @@
     </div>
   </footer>
 
-
+<script>
+  const VALIDAR_CURP_URL = "{{ url_for('registro_alumno.validar_curp')}}";
+</script>
+<script src="/static/js/registro_alumno.js"></script>
 </body>
 </html>
