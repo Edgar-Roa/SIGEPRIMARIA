@@ -1,3 +1,4 @@
+/* ...existing code... */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -34,6 +35,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* espacio superior para mensajes si decides posicionarlos absolute */
+  padding-top: 58px;
 }
 
 .login-box img {
@@ -107,28 +110,53 @@ body {
   color: #fff;
 }
 
+/* ---------- Ajustes para flash messages dentro de .login-box ---------- */
+/* Contenedor centrado horizontalmente dentro del formulario */
 .flash-messages {
   list-style: none;
   padding: 0;
-  margin-bottom: 20px;
+  margin: 0 0 20px 0; /* margen inferior para separar del resto del formulario */
   z-index: 3;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
 }
 
+/* Cada mensaje: adaptable, centrado y con quiebre de línea si es largo */
 .flash-messages li {
-  padding: 10px;
+  padding: 10px 14px;
   border-radius: 6px;
-  font-size: 1.2em;
-  margin-bottom: 10px;
+  font-size: 1.05em;
+  margin: 0;
   text-align: center;
+  max-width: 90%;
+  color: white;
+  word-wrap: break-word;
+  white-space: normal;
+  box-sizing: border-box;
 }
 
+/* Colores por categoría */
 .flash-messages li.success {
   background-color: #28a745;
-  color: white;
 }
 
 .flash-messages li.error {
   background-color: #dc3545;
-  color: white;
 }
+
+/* Si prefieres que el mensaje esté superpuesto en la parte superior del cuadro,
+   descomenta las siguientes reglas y ajusta top según necesites. */
+/*
+.flash-messages {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+}
+*/
+ /* ...existing code... */

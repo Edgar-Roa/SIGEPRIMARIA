@@ -1,4 +1,4 @@
-#!C:\Users\edgar\OneDrive\Escritorio\SIGUEPRIMARIA\venv\Scripts\python.exe
+#!C:\Users\HP\Desktop\SIGEPRIMARIA\venv\Scripts\python.exe
 
 from ConfigParser import NoOptionError, NoSectionError
 import logging

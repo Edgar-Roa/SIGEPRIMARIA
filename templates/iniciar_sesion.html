@@ -34,17 +34,17 @@
   <main class="content-area">
     <div class="blur-bg"></div>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <ul class="flash-messages">
-          {% for category, message in messages %}
-            <li class="{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-
     <form class="login-box" method="POST" action="{{ url_for('iniciar_sesion.iniciar_sesion') }}">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class="flash-messages">
+            {% for category, message in messages %}
+              <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+
       <img src="/static/imagenes/logo.png" alt="Sige Primaria">
       
       <label for="correo"><i class="fas fa-user"></i> Correo</label>
