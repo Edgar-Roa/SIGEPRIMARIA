@@ -30,14 +30,13 @@
 
   <div class="main-wrapper">
     
-    <!-- Header -->
     <div class="page-header">
       <h1>
         <i class="fas fa-file-upload"></i>
         Registrar Documento
       </h1>
       <p style="color: #666; margin-top: 0.5rem;">
-        Registre la entrega de un documento para <strong>{{ alumno.nombre_completo }}</strong>
+        Suba el archivo digital para el documento pendiente de <strong>{{ alumno.nombre_completo }}</strong>
       </p>
       <div class="breadcrumb">
         <a href="{{ url_for('panel_tutor.panel_tutor') }}">Panel</a>
@@ -48,7 +47,6 @@
       </div>
     </div>
 
-    <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
@@ -60,20 +58,20 @@
       {% endif %}
     {% endwith %}
 
-    <!-- Info Box -->
-    <div class="info-box">
-      <i class="fas fa-info-circle"></i>
-      <strong>Nota:</strong> Por ahora registramos que el documento fue entregado físicamente. Próximamente podrá subir archivos digitales.
+    <div class="info-box success">
+      <i class="fas fa-upload"></i>
+      <strong>Instrucción:</strong> Seleccione el documento pendiente y suba el archivo digital correspondiente (PDF o imagen). La fecha y hora de registro se guardarán automáticamente al enviar.
     </div>
 
     {% if tipos_documentos %}
-    <!-- Formulario -->
-    <form method="POST" action="{{ url_for('documentos.registrar_documento_route', alumno_id=alumno.alumno_id) }}" id="formRegistro">
+    <form method="POST" 
+          action="{{ url_for('documentos.registrar_documento_route', alumno_id=alumno.alumno_id) }}" 
+          id="formRegistro"
+          enctype="multipart/form-data">
       <div class="form-container">
         
-        <!-- Selección de Documento -->
         <div class="form-section">
-          <h3><i class="fas fa-file-alt"></i> Información del Documento</h3>
+          <h3><i class="fas fa-file-alt"></i> Selección y Subida de Archivo</h3>
           
           <div class="form-group">
             <label for="tipo_doc_id">
@@ -90,48 +88,34 @@
               </option>
               {% endfor %}
             </select>
-            <small>Seleccione el documento que está entregando</small>
+            <small>Seleccione el documento que está subiendo</small>
           </div>
 
-          <!-- Info del documento seleccionado -->
           <div id="docInfoCard" class="doc-info-card">
             <strong>Descripción:</strong>
             <p id="docDescripcion" style="margin-top: 0.5rem; color: #666;"></p>
           </div>
-
-          <div class="form-group">
-            <label for="fecha_entrega">
-              <i class="fas fa-calendar"></i>
-              Fecha de Entrega <span class="required">*</span>
+          
+          <div class="form-group file-upload-group">
+            <label for="archivo_digital">
+              <i class="fas fa-file-upload"></i>
+              Subir Archivo Digital <span class="required">*</span>
             </label>
-            <input type="date" 
-                   id="fecha_entrega" 
-                   name="fecha_entrega" 
-                   required
-                   max="{{ max_date }}"
-                   value="{{ max_date }}">
-            <small>Fecha en que se entregó el documento</small>
+            <input type="file" 
+                   id="archivo_digital" 
+                   name="archivo_digital" 
+                   accept=".pdf, .jpg, .jpeg, .png" 
+                   required>
+            <small>Archivos permitidos: PDF, JPG, PNG (Tamaño máximo recomendado: 5MB)</small>
+          </div>
           </div>
 
-          <div class="form-group">
-            <label for="observaciones">
-              <i class="fas fa-comment"></i>
-              Observaciones (Opcional)
-            </label>
-            <textarea id="observaciones" 
-                      name="observaciones"
-                      placeholder="Ej: Original y copia entregadas, Documento verificado, etc."></textarea>
-            <small>Información adicional sobre el documento</small>
-          </div>
-        </div>
-
-        <!-- Botones de Acción -->
         <div class="form-actions">
           <a href="{{ url_for('documentos.ver_documentos', alumno_id=alumno.alumno_id) }}" class="btn btn-secondary">
             <i class="fas fa-times"></i> Cancelar
           </a>
           <button type="submit" class="btn btn-primary">
-            <i class="fas fa-save"></i> Registrar Documento
+            <i class="fas fa-cloud-upload-alt"></i> Subir Documento
           </button>
         </div>
 
@@ -141,9 +125,9 @@
     <div class="empty-state">
       <i class="fas fa-check-circle"></i>
       <h3>Todos los documentos han sido entregados</h3>
-      <p>No hay documentos pendientes para este alumno</p>
+      <p>No hay documentos pendientes para este alumno en la lista.</p>
       <a href="{{ url_for('documentos.ver_documentos', alumno_id=alumno.alumno_id) }}" class="btn btn-primary" style="margin-top: 1rem;">
-        <i class="fas fa-arrow-left"></i> Ver Documentos
+        <i class="fas fa-arrow-left"></i> Ver Documentos Registrados
       </a>
     </div>
     {% endif %}

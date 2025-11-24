@@ -9,6 +9,7 @@ from models.inscripcion_model import (
 )
 from utils.decorators import login_requerido
 from functools import wraps
+from models.escuela_model import registrar_escuela_bd
 
 panel_admin_bp = Blueprint("panel_admin", __name__)
 
@@ -144,3 +145,44 @@ def revisar_inscripcion(inscripcion_id):
         flash("Error al procesar la inscripción", "error")
 
     return redirect(url_for('panel_admin.panel_admin'))
+
+    # AGREGA ESTO AL FINAL DE: panel_admin.py
+
+@panel_admin_bp.route("/admin/registrar-escuela", methods=["GET", "POST"])
+@login_requerido
+@admin_requerido
+def registrar_escuela_route():
+    # 1. Seguridad extra: Validar que sea específicamente SEP ADMIN
+    if session.get('rol') != 'sep_admin':
+        flash("Solo el Administrador de la SEP puede registrar escuelas.", "error")
+        return redirect(url_for('panel_admin.panel_admin'))
+
+    if request.method == "POST":
+        try:
+            # 2. Recolectar datos
+            datos_escuela = {
+                'cct': request.form.get('cct').strip().upper(),
+                'nombre': request.form.get('nombre').strip(),
+                'turno': request.form.get('turno'),
+                'zona_escolar': request.form.get('zona_escolar'),
+                'cupo_total': request.form.get('cupo_total'),
+                'direccion': request.form.get('direccion'),
+                'municipio': request.form.get('municipio'),
+                'entidad': request.form.get('entidad'),
+                'telefono': request.form.get('telefono')
+            }
+
+            # 3. Guardar
+            escuela_id = registrar_escuela_bd(datos_escuela)
+
+            if escuela_id:
+                flash(f"Escuela '{datos_escuela['nombre']}' registrada exitosamente.", "success")
+                return redirect(url_for('panel_admin.panel_admin'))
+            else:
+                flash("Error al registrar. Verifique que la CCT no esté duplicada.", "error")
+
+        except Exception as e:
+            print(f"Error en ruta registro escuela: {e}")
+            flash("Ocurrió un error interno.", "error")
+
+    return render_template('registrar_escuela.html')

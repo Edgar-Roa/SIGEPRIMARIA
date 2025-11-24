@@ -40,6 +40,48 @@ def registrar_documento(alumno_id, tipo_doc_id, fecha_entrega, observaciones, ar
         if conn:
             conn.close()
 
+# models/documento_model.pyactualizar o guardar documento (insertar o actualizar)
+# 1. NUEVA FUNCIÓN: Agregar esta función para permitir "Guardar o Actualizar"
+def guardar_o_actualizar_documento(alumno_id, tipo_doc_id, archivo_url, uploaded_by):
+    """
+    Registra un nuevo documento O actualiza uno existente si ya hay registro.
+    """
+    conn = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Usamos ON CONFLICT para manejar "Insertar o Actualizar"
+        cursor.execute("""
+            INSERT INTO documento_alumno (
+                alumno_id, tipo_doc_id, archivo_url, status, fecha_subida, uploaded_by, observaciones
+            ) VALUES (%s, %s, %s, 'recibido', CURRENT_TIMESTAMP, %s, NULL)
+            ON CONFLICT (alumno_id, tipo_doc_id) 
+            DO UPDATE SET
+                archivo_url = EXCLUDED.archivo_url,
+                status = 'recibido',   -- Reiniciamos status a recibido para revisión
+                fecha_subida = CURRENT_TIMESTAMP,
+                uploaded_by = EXCLUDED.uploaded_by,
+                observaciones = NULL   -- Limpiamos observaciones anteriores
+            RETURNING documento_id
+        """, (alumno_id, tipo_doc_id, archivo_url, uploaded_by))
+        
+        resultado = cursor.fetchone()
+        documento_id = resultado['documento_id']
+        conn.commit()
+        
+        print(f"✅ Documento guardado/actualizado con ID: {documento_id}")
+        return documento_id
+        
+    except DatabaseError as e:
+        print(f"❌ Error al guardar/actualizar documento: {e}")
+        if conn:
+            conn.rollback()
+        return None
+    finally:
+        if conn:
+            conn.close()
+
 # 📂 Obtener todos los documentos entregados por un alumno
 def obtener_documentos_por_alumno(alumno_id):
     """Obtener documentos de un alumno - retorna lista de dicts"""
@@ -89,11 +131,13 @@ def documento_entregado(alumno_id, tipo_doc_id):
         conn.close()
 
 # 📋 Obtener checklist documental del alumno
+# 2. FUNCIÓN MODIFICADA: Reemplaza tu función 'obtener_checklist_documental' con esta
 def obtener_checklist_documental(alumno_id):
     """Obtener checklist documental - retorna lista de dicts"""
     try:
         conn = get_connection()
         cursor = conn.cursor()
+        # SE AGREGÓ 'da.archivo_url' A ESTA CONSULTA PARA PODER VER EL DOCUMENTO
         cursor.execute("""
             SELECT 
                 td.tipo_doc_id,
@@ -104,7 +148,8 @@ def obtener_checklist_documental(alumno_id):
                 CASE WHEN da.documento_id IS NOT NULL THEN 'Entregado' ELSE 'Pendiente' END AS estado,
                 da.status,
                 da.fecha_subida,
-                da.observaciones
+                da.observaciones,
+                da.archivo_url 
             FROM tipos_documento td
             LEFT JOIN documento_alumno da ON da.tipo_doc_id = td.tipo_doc_id AND da.alumno_id = %s
             WHERE td.activo = TRUE

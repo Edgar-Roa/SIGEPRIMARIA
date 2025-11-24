@@ -29,7 +29,6 @@
 
   <div class="main-wrapper">
     
-    <!-- Header -->
     <div class="page-header">
       <h1>
         <i class="fas fa-folder-open"></i>
@@ -58,7 +57,6 @@
       </div>
     </div>
 
-    <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
@@ -70,7 +68,6 @@
       {% endif %}
     {% endwith %}
 
-    <!-- Progreso General -->
     <div class="progress-card">
       <div class="progress-header">
         <h2><i class="fas fa-chart-line"></i> Progreso de Documentación</h2>
@@ -98,7 +95,6 @@
       </div>
     </div>
 
-    <!-- Lista de Documentos -->
     <h2 style="color: #9d2449; margin-bottom: 1.5rem; font-size: 1.5rem;">
       <i class="fas fa-clipboard-list"></i> Documentos Requeridos
     </h2>
@@ -134,11 +130,28 @@
           {% endif %}
         </div>
         
-        <div class="documento-acciones">
+        <div class="documento-acciones" style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
           {% if doc.estado == 'Entregado' %}
+            
             <span class="status-badge status-{{ doc.status|lower if doc.status else 'recibido' }}">
               {{ doc.status or 'Recibido' }}
             </span>
+
+            <div class="btn-group" style="display: flex; gap: 5px; margin-top: 5px;">
+              {% if doc.archivo_url %}
+              <a href="{{ doc.archivo_url }}" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 5px 10px;" title="Ver documento">
+                <i class="fas fa-eye"></i> Ver
+              </a>
+              {% endif %}
+
+              <a href="{{ url_for('documentos.registrar_documento_route', alumno_id=alumno.alumno_id) }}" 
+                 class="btn btn-primary" 
+                 style="font-size: 0.8rem; padding: 5px 10px; background-color: #13322b;"
+                 title="Actualizar o Corregir Archivo">
+                <i class="fas fa-pen"></i>
+              </a>
+            </div>
+
           {% else %}
             <a href="{{ url_for('documentos.registrar_documento_route', alumno_id=alumno.alumno_id) }}" 
                class="btn btn-primary">

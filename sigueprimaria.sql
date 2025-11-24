@@ -5,15 +5,7 @@ CREATE TYPE doc_status AS ENUM ('pendiente','recibido','validado','rechazado');
 CREATE TYPE enroll_status AS ENUM ('pendiente','en_revision','aceptado','rechazado');
 CREATE TYPE school_shift AS ENUM ('matutino','vespertino','mixto');
 
-SELECT * FROM pg_type WHERE typname = 'user_role';
 
-SELECT * FROM usuarios WHERE correo = 'edgarroa32@gmail.com';
-
-INSERT INTO usuarios (nombre, apellido_paterno, apellido_materno, correo, password_hash, rol)
-VALUES ('Edgar', 'Marquez', 'Roa', 'edgarroa32@gmail.com', 'hash_prueba', 'tutor')
-RETURNING usuario_id;
-
-DELETE FROM usuarios WHERE correo = 'edgarroa32@gmail.com';
 
 CREATE TABLE usuarios (
     usuario_id SERIAL PRIMARY KEY,

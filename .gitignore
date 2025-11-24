@@ -1,0 +1,12 @@
+# 1. El entorno virtual (pesa demasiado)
+venv/
+
+# 2. Tus secretos y contraseñas (SEGURIDAD CRÍTICA)
+.env
+
+# 3. Tu llave de acceso a AWS (SEGURIDAD CRÍTICA)
+*.pem
+
+# 4. Archivos basura de Python
+__pycache__/
+*.pyc

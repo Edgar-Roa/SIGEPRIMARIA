@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar Escuela - SIGEPRIMARIA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/footer.css">
+  <link rel="stylesheet" href="/static/css/registrar_documento.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo-container">
+      <img src="/static/imagenes/logo2.jpg" alt="Logo">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Trámites</a>
+      <a href="#">Gobierno</a>
+    </nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="{{url_for('panel_admin.panel_admin')}}">Panel Admin</a>
+    <a href="#">Registrar Escuela</a>
+  </div>
+
+  <div class="main-wrapper">
+    <div class="page-header">
+      <h1><i class="fas fa-school"></i> Alta de Nueva Escuela</h1>
+      <p>Ingrese los datos oficiales del centro de trabajo (CCT)</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            <i class="fas fa-info-circle"></i> {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('panel_admin.registrar_escuela_route') }}">
+      <div class="form-container">
+        
+        <div class="form-section">
+          <h3>Datos del Centro de Trabajo</h3>
+          
+          <div class="form-group">
+            <label for="cct">Clave de Centro de Trabajo (CCT) <span class="required">*</span></label>
+            <input type="text" id="cct" name="cct" required placeholder="Ej: 12DPR0012X" maxlength="20" style="text-transform: uppercase;">
+          </div>
+
+          <div class="form-group">
+            <label for="nombre">Nombre de la Escuela <span class="required">*</span></label>
+            <input type="text" id="nombre" name="nombre" required placeholder="Ej: Primaria Benito Juárez">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="turno">Turno <span class="required">*</span></label>
+              <select id="turno" name="turno" required>
+                <option value="matutino">Matutino</option>
+                <option value="vespertino">Vespertino</option>
+                <option value="mixto">Mixto</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="cupo_total">Cupo Total <span class="required">*</span></label>
+              <input type="number" id="cupo_total" name="cupo_total" value="300" min="1" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="zona_escolar">Zona Escolar</label>
+            <input type="text" id="zona_escolar" name="zona_escolar" placeholder="Ej: Zona 05">
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Ubicación y Contacto</h3>
+          
+          <div class="form-group">
+            <label for="direccion">Dirección Completa</label>
+            <textarea id="direccion" name="direccion" rows="2" placeholder="Calle, Número, Colonia..."></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="municipio">Municipio</label>
+              <input type="text" id="municipio" name="municipio">
+            </div>
+            <div class="form-group">
+              <label for="entidad">Entidad</label>
+              <input type="text" id="entidad" name="entidad" value="Ciudad de México">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <input type="tel" id="telefono" name="telefono">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="{{ url_for('panel_admin.panel_admin') }}" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancelar
+          </a>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Guardar Escuela
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-col"><img src="/static/imagenes/logo2.jpg" alt="Logo" style="height: 60px;"></div>
+    <div class="footer-col"><h4>Enlaces</h4><ul><li><a href="#">Participa</a></li></ul></div>
+    <div class="footer-col"><h4>¿Qué es gob.mx?</h4><p>Portal único de trámites</p></div>
+  </footer>
+</body>
+</html>

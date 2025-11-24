@@ -209,3 +209,40 @@ def actualizar_grupo(grupo_id, nombre_grupo=None, cupo=None, docente_usuario_id=
     finally:
         if conn:
             conn.close()
+
+# AGREGA ESTO AL FINAL DE: models/escuela_model.py
+
+def registrar_escuela_bd(datos):
+    """Registra una nueva escuela en la base de datos"""
+    conn = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO escuelas (
+                cct, nombre, turno, zona_escolar, cupo_total, 
+                direccion, municipio, entidad, telefono, activo
+            ) VALUES (
+                %s, %s, %s, %s, %s, 
+                %s, %s, %s, %s, TRUE
+            )
+            RETURNING escuela_id
+        """, (
+            datos['cct'], datos['nombre'], datos['turno'], datos['zona_escolar'],
+            datos['cupo_total'], datos['direccion'], datos['municipio'], 
+            datos['entidad'], datos['telefono']
+        ))
+        
+        resultado = cursor.fetchone()
+        escuela_id = resultado['escuela_id']
+        conn.commit()
+        print(f"✅ Escuela registrada con ID: {escuela_id}")
+        return escuela_id
+        
+    except DatabaseError as e:
+        print(f"❌ Error BD al registrar escuela: {e}")
+        if conn: conn.rollback()
+        return None
+    finally:
+        if conn: conn.close()
