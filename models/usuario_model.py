@@ -3,6 +3,7 @@ from psycopg2 import DatabaseError
 
 def obtener_usuario_por_correo(correo):
     """Buscar usuario por correo - retorna dict o None"""
+    conn = None # CORRECCIÓN 1: Inicializar conn
     try:
         conn = get_connection()
         cursor = conn.cursor()
@@ -13,7 +14,8 @@ def obtener_usuario_por_correo(correo):
         print(f"Error al obtener usuario: {e}")
         return None
     finally:
-        conn.close()
+        if conn: # CORRECCIÓN 2: Verificar si existe antes de cerrar
+            conn.close()
 
 def registrar_usuario(nombre, apellido_paterno, apellido_materno, correo, password_hash, rol):
     """Registrar nuevo usuario - retorna usuario_id o None"""
@@ -55,6 +57,7 @@ def registrar_usuario(nombre, apellido_paterno, apellido_materno, correo, passwo
 
 def correo_existe(correo):
     """Validar si el correo ya está registrado"""
+    conn = None # CORRECCIÓN 1: Inicializar conn
     try:
         conn = get_connection()
         cursor = conn.cursor()
@@ -65,10 +68,12 @@ def correo_existe(correo):
         print(f"Error al validar correo: {e}")
         return False
     finally:
-        conn.close()
+        if conn: # CORRECCIÓN 2: Verificar si existe antes de cerrar
+            conn.close()
 
 def obtener_password_hash(usuario_id):
     """Obtener hash de contraseña por ID"""
+    conn = None # CORRECCIÓN 1: Inicializar conn
     try:
         conn = get_connection()
         cursor = conn.cursor()
@@ -80,4 +85,5 @@ def obtener_password_hash(usuario_id):
         print(f"Error al obtener hash: {e}")
         return None
     finally:
-        conn.close()
+        if conn: # CORRECCIÓN 2: Verificar si existe antes de cerrar
+            conn.close()
