@@ -1,57 +1,64 @@
 # ============================================
-# routes/registro_alumno.py
+# routes/registro_alumno.py (CORREGIDO)
 # ============================================
-from flask import Blueprint, render_template, request, redirect, flash, url_for, session
+from flask import Blueprint, render_template, request, redirect, flash, url_for, session, current_app # Added current_app
 from models.database import get_connection
 from models.alumno_model import registrar_alumno, vincular_alumno_a_tutor, curp_existe
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
+import mimetypes # Importado para MIME type
 
 registro_alumno_bp = Blueprint('registro_alumno', __name__)
 
-# Configuración de carga de archivos
-UPLOAD_FOLDER = 'uploads/alumnos'
+# Configuración de carga de archivos (Relativo a la carpeta 'static' del proyecto)
+UPLOAD_FOLDER_RELATIVE = 'uploads/documentos' # Cambio de nombre a 'uploads/documentos' para simplificar
 ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png'}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 def crear_carpeta_uploads():
-    """Crear carpeta de uploads si no existe"""
-    Path(UPLOAD_FOLDER).mkdir(parents=True, exist_ok=True)
+    """Crear carpeta de uploads física si no existe (dentro de static)"""
+    # La carpeta física estará en /home/ubuntu/.../SIGUEPRIMARIA/static/uploads/documentos/
+    physical_path = os.path.join(current_app.root_path, 'static', UPLOAD_FOLDER_RELATIVE)
+    Path(physical_path).mkdir(parents=True, exist_ok=True)
+    return physical_path
 
 def archivo_permitido(filename):
     """Validar extensión del archivo"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def guardar_archivo(file, alumno_id, tipo_documento):
-    """Guardar archivo en la carpeta de uploads"""
+    """Guardar archivo en la carpeta de uploads y retornar la URL web"""
     if not file or file.filename == '':
         return None
     
-    # Validar tipo de archivo
     if not archivo_permitido(file.filename):
         return None
     
-    # Crear carpeta si no existe
-    crear_carpeta_uploads()
+    physical_dir = crear_carpeta_uploads() # Obtiene la ruta física de destino
     
     # Crear nombre seguro del archivo
     ext = file.filename.rsplit('.', 1)[1].lower()
     filename = f"alumno_{alumno_id}_{tipo_documento}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{ext}"
+    safe_filename = secure_filename(filename)
     
-    filepath = os.path.join(UPLOAD_FOLDER, secure_filename(filename))
+    # Ruta física completa donde se guardará el archivo
+    physical_filepath = os.path.join(physical_dir, safe_filename)
     
-    # Guardar archivo
-    file.save(filepath)
+    # La URL web para el navegador (ej: /static/uploads/documentos/archivo.jpg)
+    web_url = f"/static/{UPLOAD_FOLDER_RELATIVE}/{safe_filename}"
+
+    # Guardar archivo físicamente en el servidor
+    file.save(physical_filepath)
     
-    return filepath
+    return web_url # Retorna la URL web válida
+# ----------------------------------------------------------------------------------
 
 @registro_alumno_bp.route('/registro-alumno', methods=['GET', 'POST'])
 def registro_alumno():
     """Formulario para registrar un nuevo alumno"""
     
-    # Verificar que el tutor esté autenticado
     usuario_id = session.get('usuario_id')
     rol = session.get('rol')
     
@@ -60,35 +67,22 @@ def registro_alumno():
         return redirect(url_for('iniciar_sesion.iniciar_sesion'))
     
     if request.method == 'GET':
-        # Obtener escuelas y grados para los selects
+        # ... (La lógica GET se mantiene igual)
         conn = None
         try:
             conn = get_connection()
             cursor = conn.cursor()
             
             # Obtener escuelas activas
-            cursor.execute("""
-                SELECT escuela_id, nombre, cct, municipio, turno
-                FROM escuelas
-                WHERE activo = TRUE
-                ORDER BY nombre
-            """)
+            cursor.execute("SELECT escuela_id, nombre, cct, municipio, turno FROM escuelas WHERE activo = TRUE ORDER BY nombre")
             escuelas = cursor.fetchall()
             
             # Obtener grados
-            cursor.execute("""
-                SELECT grado_id, nivel, descripcion
-                FROM grados
-                ORDER BY nivel
-            """)
+            cursor.execute("SELECT grado_id, nivel, descripcion FROM grados ORDER BY nivel")
             grados = cursor.fetchall()
             
             # Obtener tutor_id
-            cursor.execute("""
-                SELECT tutor_id, nombre, apellido_paterno, apellido_materno
-                FROM tutores
-                WHERE usuario_id = %s
-            """, (usuario_id,))
+            cursor.execute("SELECT tutor_id, nombre, apellido_paterno, apellido_materno FROM tutores WHERE usuario_id = %s", (usuario_id,))
             tutor = cursor.fetchone()
             
             if not tutor:
@@ -113,7 +107,7 @@ def registro_alumno():
     # POST - Procesar el registro
     conn = None
     try:
-        # Obtener datos del formulario
+        # Obtener datos del formulario (Se mantiene igual)
         nombre = request.form.get('nombre', '').strip()
         apellido_paterno = request.form.get('apellido_paterno', '').strip()
         apellido_materno = request.form.get('apellido_materno', '').strip()
@@ -131,26 +125,22 @@ def registro_alumno():
         escuela_id = request.form.get('escuela_id', '')
         grado_id = request.form.get('grado_id', '')
         
-        # Validaciones básicas
+        # Validaciones (Se mantienen igual)
         if not all([nombre, apellido_paterno, apellido_materno, curp, fecha_nacimiento, sexo]):
             flash("Los campos marcados con * son obligatorios", "error")
             return redirect(url_for('registro_alumno.registro_alumno'))
         
-        # Validar CURP
         if len(curp) != 18:
             flash("El CURP debe tener 18 caracteres", "error")
             return redirect(url_for('registro_alumno.registro_alumno'))
         
-        # Verificar si CURP ya existe
         if curp_existe(curp):
             flash("Ya existe un alumno registrado con este CURP", "error")
             return redirect(url_for('registro_alumno.registro_alumno'))
         
-        # Validar fecha de nacimiento
         try:
             fecha_nac_obj = datetime.strptime(fecha_nacimiento, '%Y-%m-%d').date()
             edad = (datetime.now().date() - fecha_nac_obj).days // 365
-            
             if edad < 5 or edad > 15:
                 flash("El alumno debe tener entre 5 y 15 años para primaria", "warning")
         except ValueError:
@@ -160,7 +150,7 @@ def registro_alumno():
         conn = get_connection()
         cursor = conn.cursor()
         
-        # Obtener tutor_id
+        # Obtener tutor_id (Se mantiene igual)
         cursor.execute("SELECT tutor_id FROM tutores WHERE usuario_id = %s", (usuario_id,))
         tutor = cursor.fetchone()
         
@@ -170,20 +160,11 @@ def registro_alumno():
         
         tutor_id = tutor['tutor_id']
         
-        # Registrar alumno
+        # Registrar alumno (Se mantiene igual)
         alumno_id = registrar_alumno(
-            nombre=nombre,
-            apellido_paterno=apellido_paterno,
-            apellido_materno=apellido_materno,
-            curp=curp,
-            fecha_nacimiento=fecha_nacimiento,
-            sexo=sexo,
-            direccion=direccion,
-            municipio=municipio,
-            entidad=entidad,
-            telefono=telefono,
-            nacionalidad=nacionalidad,
-            escuela_procedencia=escuela_procedencia,
+            nombre=nombre, apellido_paterno=apellido_paterno, apellido_materno=apellido_materno, curp=curp,
+            fecha_nacimiento=fecha_nacimiento, sexo=sexo, direccion=direccion, municipio=municipio,
+            entidad=entidad, telefono=telefono, nacionalidad=nacionalidad, escuela_procedencia=escuela_procedencia,
             creado_por_usuario_id=usuario_id
         )
         
@@ -191,11 +172,11 @@ def registro_alumno():
             flash("Error al registrar al alumno", "error")
             return redirect(url_for('registro_alumno.registro_alumno'))
         
-        # Vincular alumno con tutor
+        # Vincular alumno con tutor (Se mantiene igual)
         if not vincular_alumno_a_tutor(alumno_id, tutor_id, es_representante=True):
             flash("Alumno registrado pero hubo un error al vincularlo", "warning")
         
-        # ========== PROCESAR DOCUMENTOS ==========
+        # ========== PROCESAR DOCUMENTOS (CORREGIDO) ==========
         documentos_procesados = 0
         documentos_map = {
             'doc_alumno_acta': ('acta_nac', 'Acta de Nacimiento'),
@@ -209,7 +190,7 @@ def registro_alumno():
             if field_name in request.files:
                 file = request.files[field_name]
                 if file and file.filename != '':
-                    # Validar tamaño
+                    
                     file.seek(0, os.SEEK_END)
                     file_size = file.tell()
                     file.seek(0)
@@ -218,15 +199,12 @@ def registro_alumno():
                         flash(f"El archivo {tipo_nombre} excede el tamaño máximo (10 MB)", "warning")
                         continue
                     
-                    # Validar extensión
                     if not archivo_permitido(file.filename):
                         flash(f"Formato no permitido para {tipo_nombre}", "warning")
                         continue
                     
-                    # Obtener tipo_doc_id del código
-                    cursor.execute("""
-                        SELECT tipo_doc_id FROM tipos_documento WHERE codigo = %s
-                    """, (tipo_codigo,))
+                    # Obtener tipo_doc_id
+                    cursor.execute("SELECT tipo_doc_id FROM tipos_documento WHERE codigo = %s", (tipo_codigo,))
                     tipo_doc_result = cursor.fetchone()
                     
                     if not tipo_doc_result:
@@ -235,12 +213,12 @@ def registro_alumno():
                     
                     tipo_doc_id = tipo_doc_result['tipo_doc_id']
                     
-                    # Guardar archivo
-                    filepath = guardar_archivo(file, alumno_id, tipo_codigo)
-                    if filepath:
+                    # Guardar archivo y obtener la URL WEB CORREGIDA
+                    filepath_web_url = guardar_archivo(file, alumno_id, tipo_codigo)
+                    
+                    if filepath_web_url: # Si se guardó correctamente
                         try:
                             # Obtener MIME type
-                            import mimetypes
                             mime_type, _ = mimetypes.guess_type(file.filename)
                             
                             cursor.execute("""
@@ -255,7 +233,7 @@ def registro_alumno():
                                     nombre_archivo = EXCLUDED.nombre_archivo,
                                     mime_type = EXCLUDED.mime_type,
                                     fecha_subida = NOW()
-                            """, (alumno_id, tipo_doc_id, filepath, 
+                            """, (alumno_id, tipo_doc_id, filepath_web_url, 
                                   secure_filename(file.filename), mime_type, usuario_id))
                             
                             documentos_procesados += 1
@@ -263,20 +241,14 @@ def registro_alumno():
                             print(f"Error al guardar documento {tipo_nombre}: {e}")
                             conn.rollback()
         
-        # Confirmar cambios
+        # Confirmar cambios (Se mantiene igual)
         if documentos_procesados > 0:
             conn.commit()
             flash(f"Se cargaron {documentos_procesados} documento(s) exitosamente", "info")
         
-        # Si se seleccionó escuela y grado, crear inscripción
+        # Si se seleccionó escuela y grado, crear inscripción (Se mantiene igual)
         if escuela_id and grado_id:
-            # Obtener ciclo activo
-            cursor.execute("""
-                SELECT ciclo_id, inscripciones_abiertas
-                FROM ciclos
-                WHERE activo = TRUE
-                LIMIT 1
-            """)
+            cursor.execute("SELECT ciclo_id, inscripciones_abiertas FROM ciclos WHERE activo = TRUE LIMIT 1")
             ciclo = cursor.fetchone()
             
             if ciclo and ciclo['inscripciones_abiertas']:
@@ -297,7 +269,6 @@ def registro_alumno():
         
     except Exception as e:
         print(f"❌ Error al registrar alumno: {type(e).__name__}: {str(e)}")
-        import traceback
         traceback.print_exc()
         if conn:
             conn.rollback()
