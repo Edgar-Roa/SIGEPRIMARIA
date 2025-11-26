@@ -1,0 +1,247 @@
+ /* Footer Styling */
+    .footer {
+      display: flex;
+      justify-content: space-around;
+      background-color: #5D0832;
+      color: white;
+      padding: 40px 20px;
+    }
+
+    .footer-col {
+      width: 20%;
+    }
+
+    .footer-col h4 {
+      margin-top: 0;
+      font-size: 1.1em;
+    }
+    
+    .footer-col a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9em;
+    }
+    
+    .footer-col p, .footer-col ul {
+        font-size: 0.9em;
+    }
+
+    .social-icons a {
+      color: white;
+      margin-right: 15px;
+      font-size: 24px;
+    }
+
+
+ /* Header Styling */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+      background-color: #5D0832;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-container img {
+      height: 50px;
+      margin-right: 10px;
+    }
+
+    .logo-text {
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    .main-nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .search-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5em;
+    }
+
+    /* Sub-header (SIGEPRIMARIA) */
+    .subheader {
+      background-color: #a87e41;
+      color: white;
+      padding: 10px 50px;
+      display: flex;
+      gap: 30px;
+    }
+
+    .subheader a {
+      color: white;
+      text-decoration: none;
+    }
+
+    /* --- ESTILOS ORIGINALES --- */
+
+/* Footer Styling */
+.footer {
+    display: flex;
+    justify-content: space-around;
+    background-color: #5D0832;
+    color: white;
+    padding: 40px 20px;
+}
+
+.footer-col {
+    width: 20%;
+}
+
+.footer-col h4 {
+    margin-top: 0;
+    font-size: 1.1em;
+}
+
+.footer-col a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.footer-col p, .footer-col ul {
+    font-size: 0.9em;
+}
+
+.social-icons a {
+    color: white;
+    margin-right: 15px;
+    font-size: 24px;
+}
+
+
+/* Header Styling */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    background-color: #5D0832;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-container img {
+    height: 50px;
+    margin-right: 10px;
+}
+
+.logo-text {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.main-nav {
+    display: flex;
+    gap: 20px;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: #333; /* Ojo: este color #333 será invisible en el fondo #5D0832. Revisa si querías #fff */
+    font-weight: bold;
+}
+
+.search-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+}
+
+/* Sub-header (SIGEPRIMARIA) */
+.subheader {
+    background-color: #a87e41;
+    color: white;
+    padding: 10px 50px;
+    display: flex;
+    gap: 30px;
+}
+
+.subheader a {
+    color: white;
+    text-decoration: none;
+}
+
+/* --- REGLAS RESPONSIVE PARA DISPOSITIVOS MÓVILES --- */
+
+@media (max-width: 600px) {
+    /* Ajustes generales para el padding */
+    .header, .subheader {
+        padding: 10px 15px; /* Reducir padding horizontal */
+    }
+
+    /* 1. Header (Encabezado) */
+    .header {
+        flex-direction: row; /* Mantener en fila */
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo-container img {
+        height: 40px; /* Reducir el tamaño del logo */
+    }
+    
+    .main-nav {
+        /* Ocultar elementos de navegación principales en móvil para ahorrar espacio */
+        display: none; 
+    }
+
+    /* Mostrar solo el botón de búsqueda si es necesario */
+    .search-btn {
+        display: block; 
+    }
+    
+    /* 2. Subheader (Barra de Navegación) */
+    .subheader {
+        /* Convertir de fila a columna para que los enlaces se apilen */
+        flex-direction: column;
+        gap: 5px; /* Reducir el espacio entre enlaces */
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+
+    /* 3. Footer (Pie de página) */
+    .footer {
+        flex-direction: column; /* Apilar las columnas verticalmente */
+        padding: 20px 15px;
+        gap: 20px; /* Espacio entre las columnas apiladas */
+        text-align: left;
+    }
+
+    .footer-col {
+        width: 100%; /* Las columnas ocupan todo el ancho */
+        margin-bottom: 10px;
+    }
+    
+    .footer-col h4 {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+}

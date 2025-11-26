@@ -9,14 +9,17 @@ iniciar_sesion_bp = Blueprint('iniciar_sesion', __name__)
 def iniciar_sesion():
     """Inicio de sesión para todos los usuarios"""
     
+    # URL de redireccionamiento en caso de error
+    ERROR_REDIRECT = redirect(url_for('iniciar_sesion.iniciar_sesion')) 
+
     if request.method == 'POST':
         correo = request.form.get('correo', '').strip().lower()
         password = request.form.get('password', '')
         
-        # Validaciones básicas
+        # Validaciones básicas (APLICANDO PRG)
         if not all([correo, password]):
             flash("Por favor completa todos los campos", "error")
-            return render_template('iniciar_sesion.html')
+            return ERROR_REDIRECT
         
         conn = None
         try:
@@ -33,20 +36,20 @@ def iniciar_sesion():
             
             usuario = cursor.fetchone()
             
-            # Verificar si existe el usuario
+            # Verificar si existe el usuario (APLICANDO PRG)
             if not usuario:
                 flash("Correo o contraseña incorrectos", "error")
-                return render_template('iniciar_sesion.html')
+                return ERROR_REDIRECT
             
-            # Verificar si está activo
+            # Verificar si está activo (APLICANDO PRG)
             if not usuario['activo']:
                 flash("Esta cuenta ha sido desactivada. Contacta al administrador", "error")
-                return render_template('iniciar_sesion.html')
+                return ERROR_REDIRECT
             
-            # Verificar contraseña
+            # Verificar contraseña (APLICANDO PRG)
             if not check_password_hash(usuario['password_hash'], password):
                 flash("Correo o contraseña incorrectos", "error")
-                return render_template('iniciar_sesion.html')
+                return ERROR_REDIRECT
             
             # Actualizar último login
             cursor.execute("""
@@ -56,7 +59,7 @@ def iniciar_sesion():
             """, (datetime.now(), usuario['usuario_id']))
             conn.commit()
             
-            # Crear sesión
+            # Crear sesión (La redirección por éxito es la misma)
             session['usuario_id'] = usuario['usuario_id']
             session['rol'] = usuario['rol']
             session['nombre'] = usuario['nombre']
@@ -73,14 +76,14 @@ def iniciar_sesion():
                 return redirect(url_for('panel_docente.panel_docente'))
             else:
                 flash("Rol de usuario no reconocido", "error")
-                return render_template('iniciar_sesion.html')
+                return ERROR_REDIRECT # FIXED
             
         except Exception as e:
             print(f"❌ Error en inicio de sesión: {type(e).__name__}: {str(e)}")
             import traceback
             traceback.print_exc()
             flash("Ocurrió un error al iniciar sesión", "error")
-            return render_template('iniciar_sesion.html')
+            return ERROR_REDIRECT # FIXED
         finally:
             if conn:
                 conn.close()

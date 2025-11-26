@@ -6,10 +6,11 @@
   <title>Iniciar Sesión</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
+  
   <link rel="stylesheet" href="/static/css/iniciar_sesion.css">
-  <link rel="stylesheet" href="/static/css/footer.css">
-  <link rel="stylesheet" href="/static/css/header.css">
-  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/headers_footers.css">
 </head>
 <body>
 
@@ -34,15 +35,18 @@
   <main class="content-area">
     <div class="blur-bg"></div>
 
+    <div id="flash-container" style="display:none;">
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-        <ul class="flash-messages">
-          {% for category, message in messages %}
-            <li class="{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
       {% endif %}
     {% endwith %}
+    </div>
+
 
     <form class="login-box" method="POST" action="{{ url_for('iniciar_sesion.iniciar_sesion') }}">
       <img src="/static/imagenes/logo.png" alt="Sige Primaria">
@@ -61,6 +65,35 @@
       <button type="submit">Iniciar Sesión</button>
     </form>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Buscamos todos los mensajes que Flask haya enviado desde el bloque oculto
+        const flashMessages = document.querySelectorAll('#flash-container .alert');
+
+        flashMessages.forEach(function(alert) {
+            const category = alert.classList.contains('alert-success') ? 'success' :
+                             alert.classList.contains('alert-error') ? 'error' : 'info';
+            
+            const message = alert.textContent.trim();
+            
+            if (message) {
+                // TOAST EN ESQUINA INFERIOR (No interfiere con el formulario)
+                Swal.fire({
+                    toast: true,
+                    position: 'bottom-end', // <-- Posición: Esquina inferior derecha
+                    icon: category,
+                    title: message,
+                    showConfirmButton: false, 
+                    timer: 4000, // Visible por 4 segundos
+                    timerProgressBar: true
+                });
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
