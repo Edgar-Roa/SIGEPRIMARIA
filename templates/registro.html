@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro - Gobierno de México</title>
-  <link rel="stylesheet" href="/static/css/header.css">
-  <link rel="stylesheet" href="/static/css/sub_header.css">
+  <link rel="stylesheet" href="/static/css/headers_footers.css">
   <link rel="stylesheet" href="/static/css/registro.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
 
@@ -33,15 +34,15 @@
     <div class="form-container">
       <h2>Registro de Tutor</h2>
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <ul class="flash-messages">
+      <div id="flash-container" style="display:none;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
             {% for category, message in messages %}
-              <li class="{{ category }}">{{ message }}</li>
+              <div class="flash-data" data-category="{{ category }}" data-message="{{ message }}"></div>
             {% endfor %}
-          </ul>
-        {% endif %}
-      {% endwith %}
+          {% endif %}
+        {% endwith %}
+      </div>
 
       <form method="POST" action="{{ url_for('registro.registro') }}" autocomplete="off">
         <div class="form-field">
@@ -79,9 +80,44 @@
         <button type="submit" class="register-btn">Registrar</button>
       </form>
 
-      <p class="login-link">¿Ya tienes una cuenta? <a href="{{ url_for('inicio.inicio') }}">Inicia sesión aquí</a></p>
+      <p class="login-link">¿Ya tienes una cuenta? <a href="{{ url_for('iniciar_sesion.iniciar_sesion') }}">Inicia sesión aquí</a></p>
     </div>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('.flash-data');
+
+        flashMessages.forEach(function(element) {
+            const category = element.getAttribute('data-category');
+            const message = element.getAttribute('data-message');
+            
+            // Mapeo de categorías de Flask a Iconos de SweetAlert
+            let iconType = 'info';
+            if (category === 'success') iconType = 'success';
+            if (category === 'error') iconType = 'error';
+            if (category === 'warning') iconType = 'warning';
+
+            if (message) {
+                Swal.fire({
+                    toast: true,
+                    position: 'bottom-end', // Esquina inferior derecha (mismo estilo que login)
+                    icon: iconType,
+                    title: message,
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+            }
+        });
+    });
+  </script>
 
 </body>
 </html>
