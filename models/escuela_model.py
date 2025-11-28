@@ -1,5 +1,6 @@
 from models.database import get_connection
 from psycopg2 import DatabaseError
+from psycopg2.extras import RealDictCursor
 
 def obtener_escuela_por_director(usuario_id):
     """Obtener la escuela asignada a un director"""
@@ -246,3 +247,43 @@ def registrar_escuela_bd(datos):
         return None
     finally:
         if conn: conn.close()
+
+def obtener_todas_escuelas_mapa():
+    """Obtener lista de escuelas para el mapa (con coordenadas)"""
+    conn = None
+    try:
+        conn = get_connection()
+        # 🔧 CORRECCIÓN: Usar RealDictCursor para obtener dicts directamente
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        
+        cursor.execute("""
+            SELECT 
+                nombre, 
+                cct, 
+                direccion, 
+                municipio, 
+                latitud, 
+                longitud, 
+                turno,
+                cupo_total
+            FROM escuelas 
+            WHERE latitud IS NOT NULL
+            AND longitud IS NOT NULL
+            AND latitud <> 0 
+            AND longitud <> 0
+        """)
+        
+        # Ahora cursor.fetchall() devuelve diccionarios directamente
+        escuelas = cursor.fetchall()
+        
+        print(f"🔍 DEBUG MODELO: Se encontraron {len(escuelas)} escuelas en la BD.")
+        if escuelas:
+            print(f"📋 Primer registro: {escuelas[0]}")
+        
+        return escuelas
+    except DatabaseError as e:
+        print(f"❌ Error al obtener escuelas para mapa: {e}")
+        return []
+    finally:
+        if conn: 
+            conn.close()

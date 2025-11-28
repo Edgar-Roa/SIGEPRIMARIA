@@ -10,3 +10,4 @@ venv/
 # 4. Archivos basura de Python
 __pycache__/
 *.pyc
+escuelas_reales.csv

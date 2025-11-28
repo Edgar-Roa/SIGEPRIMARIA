@@ -3,155 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEPRIMARIA</title>
+    <title>Ubicación de Escuelas - SIGEPRIMARIA</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/headers_footers.css">
+    <link rel="stylesheet" href="/static/css/ubicacion.css"> 
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: url("/static/imagenes/fondo.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
-        }
-        .main-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #5D0832;
-        }
-        .logo img {
-            height: 60px;
-        }
-        .main-nav ul {
-            display: flex;
-            list-style: none;
-            align-items: center;
-        }
-        .main-nav li {
-            margin-left: 20px;
-        }
-        .main-nav a {
-            text-decoration: none;
-            color: #fff;
+        /* Estilos críticos para el mapa */
+        #map { height: 600px; width: 100%; border-radius: 10px; z-index: 1; }
+        .sidebar { width: 300px; background: #fff; padding: 20px; border-radius: 10px; }
+        .layout-container { display: flex; gap: 20px; max-width: 1400px; margin: 20px auto; }
+        .map-content { flex: 1; }
+        
+        /* CORRECCIÓN VISUAL: Fondo oscuro translúcido para que el texto blanco resalte */
+        .escuelas-encontradas-container {
+            color: #ffffff;
+            font-size: 1.1rem;
             font-weight: bold;
-        }
-        .search-icon {
-            width: 24px;
-            height: 24px;
-        }
-        .sub-header {
-            background-color: #d1a84f;
-            padding: 10px 20px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .sub-header p, .sub-header a {
-            font-weight: bold;
-            color: #fff;
-            text-decoration: none;
-        }
-        .content-area {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-            position: relative;
-        }
-        .blur-bg {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            backdrop-filter: blur(2px);
-            z-index: 1;
-        }
-        .login-box {
-            position: relative;
-            z-index: 2;
-            background: #8c0022;
-            border-radius: 30px;
-            padding: 40px 30px 30px 30px;
-            width: 350px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .login-box img {
-            width: 120px;
             margin-bottom: 10px;
+            background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro */
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        .login-box h2 {
-            color: #fff;
-            margin-bottom: 25px;
-        }
-        .login-box label {
-            color: #fff;
-            font-weight: bold;
-            margin-bottom: 5px;
-            align-self: flex-start;
-        }
-        .login-box input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 18px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1em;
-        }
-        .login-box button {
-            width: 100%;
-            padding: 10px;
-            background: #fff;
-            color: #8c0022;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .login-box button:hover {
-            background: #d1a84f;
-            color: #fff;
-        }
+        
+        #contador-escuelas { color: #ffc107; /* Amarillo dorado para el número */ }
+
+        @media (max-width: 768px) { .layout-container { flex-direction: column; } .sidebar { width: 100%; } }
     </style>
 </head>
 <body>
-    <header class="main-header">
-        <div class="logo">
-            <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México">
-        </div>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="#">Trámites</a></li>
-                <li><a href="#">Gobierno</a></li>
-                <li>
-                    <a href="#">
-                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+
+    <header class="header">
+        <div class="logo-container"><img src="/static/imagenes/logo2.jpg" alt="Logo"></div>
+        <nav class="main-nav"><a href="#">Trámites</a></nav>
     </header>
-    <div class="sub-header">
-        <a href="{{'inicio.inicio'}}">SIGEPRIMARIA</a>
-        <a href="{{'quienes_somos.quienes_somos'}}">¿Quiénes somos?</a>
+    
+    <div class="subheader">
+        <a href="{{ url_for('inicio.inicio') }}">SIGEPRIMARIA</a>
+        <a href="#">Ubicación de Escuelas</a>
     </div>
-    <main class="content-area">
-        <div class="blur-bg"></div>
-        <form class="login-box">
-            <img src="/static/imagenes/logo.png" alt="Sige Primaria">
-            <label for="alcaldia">Alcaldía</label>
-            <input type="text" id="alcaldia" name="alcaldia" placeholder="Alcaldía">
-            <label for="estado">Estado</label>
-            <input type="text" id="estado" name="estado" placeholder="Estado">
-            <button type="submit">Buscar</button>
-        </form>
-    </main>
+
+    <div class="layout-container">
+        
+        <aside class="sidebar">
+            <h3 style="color:#9d2449; border-bottom:2px solid #eee; padding-bottom:10px;">Filtros</h3>
+            
+            <label><strong>Buscador:</strong></label>
+            <input type="text" id="filtro-texto" placeholder="Nombre, CCT o Municipio..." style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:5px;">
+            
+            <label><strong>Municipio:</strong></label>
+            <select id="filtro-municipio" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:5px;">
+                <option value="">Todas las Alcaldías</option>
+            </select>
+
+            <label><strong>Turno:</strong></label>
+            <select id="filtro-turno" style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd; border-radius:5px;">
+                <option value="">Todos los Turnos</option>
+                <option value="MATUTINO">Matutino</option>
+                <option value="VESPERTINO">Vespertino</option>
+                <option value="MIXTO">Mixto</option>
+                <option value="DISCONTINUO">Discontinuo</option>
+            </select>
+
+            <button onclick="aplicarFiltros()" style="width:100%; padding:12px; background:#9d2449; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
+                <i class="fas fa-search"></i> Buscar / Filtrar
+            </button>
+            
+            <button onclick="limpiarFiltros()" style="width:100%; padding:12px; background:#6c757d; color:white; border:none; border-radius:5px; cursor:pointer; margin-top:10px; font-weight:bold;">
+                <i class="fas fa-undo"></i> Limpiar
+            </button>
+        </aside>
+
+        <div class="map-content">
+            <div class="escuelas-encontradas-container">
+                Escuelas encontradas: <span id="contador-escuelas">0</span>
+            </div>
+
+            <div id="loading-map" style="text-align:center; padding:20px; background:white; border-radius:10px; margin-bottom:10px;">
+                <i class="fas fa-spinner fa-spin"></i> Cargando mapa...
+            </div>
+            
+            <div id="map"></div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+    <div class="footer-col">
+      <img src="/static/imagenes/logo2.jpg" alt="Gobierno de México logo" style="height: 60px;">
+    </div>
+    <div class="footer-col">
+      <h4>Enlaces</h4>
+      <ul>
+        <li><a href="#">Participa</a></li>
+        <li><a href="#">Marco Jurídico</a></li>
+        <li><a href="#">Plataforma Nacional de Transparencia</a></li>
+        <li><a href="#">Alerta</a></li>
+        <li><a href="#">Denuncia</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>¿Qué es gob.mx?</h4>
+      <p>Es el portal único de trámites, información y participación ciudadana. <a href="#">Leer más</a></p>
+      <ul>
+        <li><a href="#">Portal de datos abiertos</a></li>
+        <li><a href="#">Declaración de accesibilidad</a></li>
+        <li><a href="#">Términos y condiciones</a></li>
+        <li><a href="#">Política de seguridad</a></li>
+        <li><a href="#">Mapa de sitio</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Denuncia contra servidores públicos</h4>
+      <h4>Síguenos en</h4>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        window.datosEscuelas = {{ escuelas_json | safe }};
+    </script>
+
+    <script src="/static/js/ubicacion.js"></script>
+
 </body>
 </html>

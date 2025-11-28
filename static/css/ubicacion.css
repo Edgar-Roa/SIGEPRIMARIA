@@ -1,0 +1,240 @@
+/* =========================================
+   CONFIGURACIÓN BASE CON FONDO
+   ========================================= */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    
+    /* --- IMAGEN DE FONDO --- */
+    background-image: url('/static/imagenes/fondo.jpg');
+    background-size: cover;       /* Cubre toda la pantalla */
+    background-position: center;  /* Centra la imagen */
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* El fondo se queda quieto al hacer scroll */
+    
+    /* Estructura para que el footer se vaya al final */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    color: #333;
+}
+
+/* =========================================
+   LAYOUT PRINCIPAL (Escritorio)
+   ========================================= */
+.layout-container {
+    display: flex;
+    flex: 1;
+    max-width: 1400px;
+    margin: 20px auto;
+    width: 95%;
+    gap: 20px;
+    align-items: flex-start; /* Alinea los paneles arriba */
+    box-sizing: border-box;
+}
+
+/* --- BARRA LATERAL (FILTROS) --- */
+.sidebar {
+    width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra suave */
+    flex-shrink: 0; /* No permite que se aplaste */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sidebar h3 {
+    color: #9d2449;
+    margin-top: 0;
+    margin-bottom: 5px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.sidebar label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+/* Inputs y Selects */
+.sidebar input[type="text"],
+.sidebar select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    background-color: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.sidebar input:focus, .sidebar select:focus {
+    outline: none;
+    border-color: #9d2449;
+}
+
+/* Botones */
+.sidebar button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 5px;
+}
+
+.sidebar button:first-of-type { 
+    background-color: #9d2449; 
+    color: white; 
+}
+.sidebar button:first-of-type:hover { background-color: #7a1a38; }
+
+.sidebar button:last-of-type { 
+    background-color: #6c757d; 
+    color: white; 
+    margin-top: 10px; 
+}
+.sidebar button:last-of-type:hover { background-color: #5a6268; }
+
+
+/* --- ÁREA DEL MAPA --- */
+.map-content {
+    flex: 1; /* Ocupa el resto del ancho disponible */
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+#map {
+    height: 650px;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    z-index: 1;
+    position: relative;
+    border: 1px solid #ddd;
+}
+
+/* Etiqueta de conteo (Fondo oscuro para leerse sobre la imagen) */
+.escuelas-encontradas-container {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0.8); /* Negro semitransparente */
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px); /* Efecto vidrio */
+}
+
+#contador-escuelas { color: #ffc107; } /* Dorado */
+
+#loading-map {
+    background: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #666;
+}
+
+/* =========================================
+   ESTILOS DE POPUP (TARJETA CFE)
+   ========================================= */
+.leaflet-popup-content-wrapper {
+    padding: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    border: none;
+}
+.leaflet-popup-content {
+    margin: 0 !important;
+    width: 300px !important;
+}
+.leaflet-popup-tip { background-color: #fff; }
+.leaflet-container a.leaflet-popup-close-button {
+    color: #fff;
+    top: 12px;
+    right: 12px;
+    font-size: 18px;
+}
+
+/* Tarjeta Interna */
+.custom-popup { font-family: 'Arial', sans-serif; text-align: left; }
+
+.popup-header {
+    background-color: #9d2449;
+    color: white;
+    padding: 15px;
+    display: flex;
+    gap: 10px;
+    border-bottom: 4px solid #bc955c;
+}
+.popup-header i { font-size: 1.5rem; margin-top: 2px; }
+.popup-header h3 { margin: 0; font-size: 1rem; font-weight: bold; text-transform: uppercase; }
+
+.popup-body { padding: 15px; background-color: #fff; color: #333; }
+.popup-row { margin-bottom: 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; }
+.popup-label { display: block; font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: bold; }
+.popup-value { font-size: 0.95rem; font-weight: 600; color: #222; display: block; }
+
+.info-badges {
+    display: flex; justify-content: space-between; margin-top: 10px;
+    background-color: #f9f9f9; padding: 8px; border-radius: 5px;
+}
+.badge-item { font-size: 0.85rem; color: #555; }
+.badge-item strong { color: #9d2449; }
+
+
+/* =========================================
+   RESPONSIVE DESIGN (MÓVILES)
+   ========================================= */
+@media (max-width: 850px) {
+    .layout-container {
+        flex-direction: column; /* Apila verticalmente */
+        width: 100%;
+        margin: 0;
+        padding: 10px; /* Espacio pequeño a los lados */
+        gap: 15px;
+    }
+
+    .sidebar {
+        width: 100%; /* Ocupa todo el ancho */
+        padding: 15px;
+        box-sizing: border-box;
+    }
+    
+    /* Botones más grandes para el dedo */
+    .sidebar button { padding: 15px; }
+
+    .map-content { width: 100%; }
+
+    /* Pegar el contador al mapa */
+    .escuelas-encontradas-container {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 0;
+        border-radius: 10px 10px 0 0;
+        box-sizing: border-box;
+    }
+
+    #map {
+        height: 500px; /* Altura cómoda para navegar */
+        border-radius: 0 0 10px 10px; /* Solo redondear abajo */
+    }
+}
