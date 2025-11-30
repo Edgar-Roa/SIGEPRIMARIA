@@ -132,12 +132,15 @@ def documento_entregado(alumno_id, tipo_doc_id):
 
 # 📋 Obtener checklist documental del alumno
 # 2. FUNCIÓN MODIFICADA: Reemplaza tu función 'obtener_checklist_documental' con esta
+# EN models/documento_model.py
+
 def obtener_checklist_documental(alumno_id):
-    """Obtener checklist documental - retorna lista de dicts"""
+    """Obtener checklist documental considerando vencimiento de 3 meses"""
     try:
         conn = get_connection()
         cursor = conn.cursor()
-        # SE AGREGÓ 'da.archivo_url' A ESTA CONSULTA PARA PODER VER EL DOCUMENTO
+        
+        # CORRECCIÓN: Agregamos '::text' a da.status para evitar el error de ENUM
         cursor.execute("""
             SELECT 
                 td.tipo_doc_id,
@@ -145,24 +148,40 @@ def obtener_checklist_documental(alumno_id):
                 td.nombre AS tipo_documento,
                 td.descripcion,
                 td.requerido,
-                CASE WHEN da.documento_id IS NOT NULL THEN 'Entregado' ELSE 'Pendiente' END AS estado,
-                da.status,
+                CASE 
+                    WHEN td.codigo = 'comprobante_dom' 
+                         AND da.fecha_subida < (CURRENT_DATE - INTERVAL '3 months') THEN 'Pendiente'
+                    WHEN da.documento_id IS NOT NULL THEN 'Entregado' 
+                    ELSE 'Pendiente' 
+                END AS estado,
+                CASE
+                    -- Si está vencido, devolvemos el texto 'Vencido'
+                    WHEN td.codigo = 'comprobante_dom' 
+                         AND da.fecha_subida < (CURRENT_DATE - INTERVAL '3 months') THEN 'Vencido'
+                    -- AQUÍ ESTÁ EL TRUCO: Convertimos el ENUM a texto (::text) para que sean compatibles
+                    ELSE da.status::text
+                END as status,
                 da.fecha_subida,
-                da.observaciones,
+                CASE
+                    WHEN td.codigo = 'comprobante_dom' 
+                         AND da.fecha_subida < (CURRENT_DATE - INTERVAL '3 months') 
+                    THEN 'Su comprobante ha expirado (vigencia 3 meses). Por favor suba uno actual.'
+                    ELSE da.observaciones
+                END as observaciones,
                 da.archivo_url 
             FROM tipos_documento td
             LEFT JOIN documento_alumno da ON da.tipo_doc_id = td.tipo_doc_id AND da.alumno_id = %s
             WHERE td.activo = TRUE
             ORDER BY td.requerido DESC, td.nombre
         """, (alumno_id,))
+        
         checklist = cursor.fetchall()
         return checklist
     except DatabaseError as e:
         print(f"Error al obtener checklist: {str(e)}")
         return []
     finally:
-        conn.close()
-
+        if conn: conn.close()
 # 📊 Obtener resumen documental del alumno
 def resumen_documental(alumno_id):
     """Obtener resumen de documentos entregados vs totales"""

@@ -37,13 +37,16 @@
       </div>
       <div class="quick-actions">
         <a href="{{ url_for('inscripcion.inscripcion') }}" class="btn btn-primary">
-          <i class="fas fa-file-signature"></i> Nueva Inscripción
+          <i class="fas fa-file-signature"></i> Reinscribir Alumno
         </a>
         <a href="{{ url_for('registro_alumno.registro_alumno') }}" class="btn btn-primary">
           <i class="fas fa-plus"></i> Registrar Alumno
         </a>
         <a href="{{ url_for('inscripcion.mis_inscripciones') }}" class="btn btn-secondary">
           <i class="fas fa-list"></i> Mis Inscripciones
+        </a>
+        <a href="{{ url_for('panel_tutor.configuracion') }}" class="btn btn-secondary" style="background-color: #343a40; color: white;">
+          <i class="fas fa-cog"></i> Configuración
         </a>
         <a href="{{ url_for('inicio.inicio') }}" class="btn btn-secondary">
           <i class="fas fa-sign-out-alt"></i> Cerrar Sesión

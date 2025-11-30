@@ -1,6 +1,6 @@
-// ...existing code...
 document.addEventListener('DOMContentLoaded', () => {
-  // Elementos principales (con guards)
+  
+  // 1. VALIDACIONES DE FORMULARIO (CURP, Fechas, etc.)
   const curpInput = document.getElementById('curp');
   const curpError = document.getElementById('curp-error');
   const curpSuccess = document.getElementById('curp-success');
@@ -11,13 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!formRegistro) return;
 
-  // ---------- CURP: validación en tiempo real ----------
+  // --- Validación CURP ---
   let timeoutId;
   if (curpInput) {
     curpInput.addEventListener('input', function () {
       const curp = this.value.toUpperCase();
       this.value = curp;
-
       if (curpError) curpError.style.display = 'none';
       if (curpSuccess) curpSuccess.style.display = 'none';
       this.classList.remove('error', 'success');
@@ -26,259 +25,164 @@ document.addEventListener('DOMContentLoaded', () => {
 
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
-        if (typeof VALIDAR_CURP_URL === 'undefined' || !VALIDAR_CURP_URL) {
-          console.error('VALIDAR_CURP_URL no definido en la plantilla.');
-          return;
+        if (typeof VALIDAR_CURP_URL !== 'undefined') {
+            fetch(VALIDAR_CURP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ curp: curp })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.valido) {
+                    curpInput.classList.add('success');
+                    if (curpSuccess) curpSuccess.style.display = 'inline';
+                } else {
+                    curpInput.classList.add('error');
+                    if (curpError) {
+                        curpError.textContent = data.mensaje;
+                        curpError.style.display = 'inline';
+                    }
+                }
+            });
         }
-        fetch(VALIDAR_CURP_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ curp: curp })
-        })
-          .then(response => {
-            if (!response.ok) throw new Error('Respuesta no OK del servidor');
-            return response.json();
-          })
-          .then(data => {
-            if (data && data.valido) {
-              curpInput.classList.add('success');
-              if (curpSuccess) curpSuccess.style.display = 'inline';
-            } else {
-              curpInput.classList.add('error');
-              if (curpError) {
-                curpError.textContent = (data && data.mensaje) ? data.mensaje : 'CURP inválido';
-                curpError.style.display = 'inline';
-              }
-            }
-          })
-          .catch(err => {
-            console.error('Error validando CURP:', err);
-            if (curpError) {
-              curpError.textContent = 'Error validando CURP (intenta de nuevo)';
-              curpError.style.display = 'inline';
-            }
-          });
       }, 500);
     });
   }
 
-  // ---------- Fecha de nacimiento -> edad ----------
+  // --- Calcular Edad ---
   if (fechaNacInput && edadInfo) {
     fechaNacInput.addEventListener('change', function () {
-      if (!this.value) {
-        edadInfo.textContent = '';
-        return;
-      }
+      if (!this.value) return;
       const hoy = new Date();
       const nacimiento = new Date(this.value);
       let edad = hoy.getFullYear() - nacimiento.getFullYear();
       const m = hoy.getMonth() - nacimiento.getMonth();
       if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
+      
       edadInfo.textContent = `Edad: ${edad} años`;
       edadInfo.style.color = (edad >= 5 && edad <= 15) ? '#28a745' : '#dc3545';
-      if (edad < 5 || edad > 15) {
-        edadInfo.textContent += ' (Fuera del rango recomendado para primaria)';
-      }
     });
   }
 
-  // ---------- Validación al enviar el formulario ----------
-  formRegistro.addEventListener('submit', function (e) {
-    const curpVal = (curpInput && curpInput.value) ? curpInput.value.trim() : '';
-    if (curpVal.length !== 18) {
-      e.preventDefault();
-      alert('El CURP debe tener exactamente 18 caracteres');
-      return false;
-    }
-
-    const escuelaEl = document.getElementById('escuela_id');
-    const gradoEl = document.getElementById('grado_id');
-    const escuelaId = escuelaEl ? escuelaEl.value : '';
-    const gradoId = gradoEl ? gradoEl.value : '';
-
-    if (!escuelaId && !gradoId) {
-      const confirmar = confirm('No has seleccionado escuela ni grado. El alumno será registrado pero sin solicitud de inscripción. ¿Deseas continuar?');
-      if (!confirmar) {
-        e.preventDefault();
-        return false;
-      }
-    }
-
-    if (escuelaId && !gradoId) {
-      e.preventDefault();
-      alert('Si seleccionas una escuela, también debes seleccionar el grado');
-      return false;
-    }
-
-    if (gradoId && !escuelaId) {
-      e.preventDefault();
-      alert('Si seleccionas un grado, también debes seleccionar la escuela');
-      return false;
-    }
-
-    return true;
-  });
-
-  // ---------- Teléfono: solo números ----------
-  if (telefonoInput) {
-    telefonoInput.addEventListener('input', function () {
-      this.value = this.value.replace(/\D/g, '');
-    });
-  }
-
-  // ---------- Capitalizar nombres al perder foco ----------
-  function capitalize(inputEl) {
-    if (!inputEl) return;
-    inputEl.addEventListener('blur', function () {
-      const words = this.value.trim().toLowerCase().split(/\s+/);
-      const capitalized = words.map(w => w ? (w.charAt(0).toUpperCase() + w.slice(1)) : '').join(' ');
-      this.value = capitalized;
-    });
-  }
-
+  // --- Capitalizar Nombres ---
   ['nombre', 'apellido_paterno', 'apellido_materno', 'municipio', 'entidad'].forEach(id => {
-    capitalize(document.getElementById(id));
+    const el = document.getElementById(id);
+    if(el) {
+        el.addEventListener('blur', function() {
+            this.value = this.value.toLowerCase().replace(/(?:^|\s)\S/g, a => a.toUpperCase());
+        });
+    }
   });
 
-  // ---------- Upload areas ----------
-  const MAX_FILE_SIZE = 10 * 1024 * 1024;
+  // 2. LÓGICA DE CARGA DE DOCUMENTOS (Drag & Drop)
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png'];
+  
+  // IDs que coinciden con tu HTML: uploadAreaActa, uploadAreaCurp...
   const UPLOAD_CONFIGS = [
-    { id: 'Alumno1', label: 'Acta de Nacimiento' },
-    { id: 'Alumno2', label: 'Cartilla de Vacunación' },
-    { id: 'Tutor1', label: 'Identificación del Tutor' },
-    { id: 'Tutor2', label: 'Comprobante de Domicilio' },
-    { id: 'Tutor3', label: 'Autorización de Tutor' }
+    'Acta', 
+    'Curp', 
+    'Cartilla', 
+    'Foto', 
+    'Certificado', 
+    'Constancia', 
+    'Ine', 
+    'Comprobante'
   ];
 
   const selectedFilesMap = {};
 
-  function initializeUploadArea(configId) {
-    const uploadArea = document.getElementById(`uploadArea${configId}`);
-    const fileInput = document.getElementById(`fileInput${configId}`);
-    const filesList = document.getElementById(`filesList${configId}`);
-    const fileCounter = document.getElementById(`fileCounter${configId}`);
+  function initializeUploadArea(suffix) {
+    const uploadArea = document.getElementById(`uploadArea${suffix}`);
+    const fileInput = document.getElementById(`fileInput${suffix}`);
+    const filesList = document.getElementById(`filesList${suffix}`);
 
     if (!uploadArea || !fileInput) return;
 
-    selectedFilesMap[configId] = [];
-
+    // Click
     uploadArea.addEventListener('click', () => fileInput.click());
 
-    uploadArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      uploadArea.classList.add('dragover');
-    });
-
-    uploadArea.addEventListener('dragleave', () => {
-      uploadArea.classList.remove('dragover');
-    });
-
+    // Drag & Drop
+    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+    uploadArea.addEventListener('dragleave', () => { uploadArea.classList.remove('dragover'); });
     uploadArea.addEventListener('drop', (e) => {
       e.preventDefault();
       uploadArea.classList.remove('dragover');
-      handleFiles(configId, e.dataTransfer.files, fileInput, filesList, fileCounter);
+      handleFiles(suffix, e.dataTransfer.files, fileInput, filesList);
     });
 
+    // Input Change
     fileInput.addEventListener('change', (e) => {
-      handleFiles(configId, e.target.files, fileInput, filesList, fileCounter);
+      handleFiles(suffix, e.target.files, fileInput, filesList);
     });
   }
 
-  function handleFiles(configId, files, fileInput, filesList, fileCounter) {
-    selectedFilesMap[configId] = [];
-    if (filesList) filesList.innerHTML = '';
+  function handleFiles(suffix, files, fileInput, filesList) {
+    if (files.length === 0) return;
+    
+    const file = files[0]; // Solo tomamos el primer archivo
+    
+    // Validar
+    if (!validateFile(file)) {
+        Swal.fire({
+            toast: true, position: 'bottom-end', icon: 'warning', 
+            title: 'Archivo inválido (Solo PDF/IMG < 10MB)'
+        });
+        fileInput.value = ''; // Limpiar
+        return;
+    }
 
-    Array.from(files).forEach(file => {
-      if (validateFile(file)) {
-        selectedFilesMap[configId].push(file);
-        if (filesList) displayFile(configId, file, filesList);
-      } else {
-        console.warn('Archivo no permitido o demasiado grande:', file.name);
-      }
-    });
+    // Mostrar en lista
+    filesList.innerHTML = ''; // Limpiar anteriores
+    displayFile(suffix, file, filesList);
 
-    updateFileCounter(configId, fileCounter);
-    updateInputFiles(configId, fileInput);
-  }
-
-  function validateFile(file) {
-    if (!file) return false;
-    if (file.size > MAX_FILE_SIZE) return false;
-    const extension = '.' + file.name.split('.').pop().toLowerCase();
-    return ALLOWED_EXTENSIONS.includes(extension);
-  }
-
-  function displayFile(configId, file, filesList) {
-    if (!filesList) return;
-    const fileItem = document.createElement('div');
-    fileItem.className = 'file-item';
-
-    const fileExtension = file.name.split('.').pop().toUpperCase();
-    const fileSizeKb = (file.size / 1024).toFixed(2);
-
-    let icon = 'fa-file';
-    if (fileExtension === 'PDF') icon = 'fa-file-pdf';
-    if (['JPG', 'JPEG', 'PNG'].includes(fileExtension)) icon = 'fa-file-image';
-
-    const info = document.createElement('div');
-    info.className = 'file-info';
-    info.innerHTML = `
-      <div class="file-icon"><i class="fas ${icon}"></i></div>
-      <div class="file-details">
-        <div class="file-name">${file.name}</div>
-        <div class="file-size">${fileSizeKb} KB</div>
-      </div>
-    `;
-
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.className = 'remove-btn';
-    removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
-
-    removeBtn.addEventListener('click', () => {
-      removeFile(configId);
-    });
-
-    const container = document.createElement('div');
-    container.appendChild(info);
-    container.appendChild(removeBtn);
-
-    filesList.appendChild(container);
-  }
-
-  function removeFile(configId) {
-    const fileInput = document.getElementById(`fileInput${configId}`);
-    const filesList = document.getElementById(`filesList${configId}`);
-    const fileCounter = document.getElementById(`fileCounter${configId}`);
-
-    selectedFilesMap[configId] = [];
-    if (filesList) filesList.innerHTML = '';
-    if (fileInput) fileInput.value = '';
-
-    updateFileCounter(configId, fileCounter);
-  }
-
-  function updateFileCounter(configId, fileCounter) {
-    const count = selectedFilesMap[configId] ? selectedFilesMap[configId].length : 0;
-    if (!fileCounter) return;
-    if (count === 0) {
-      fileCounter.style.display = 'none';
-    } else {
-      fileCounter.style.display = 'block';
-      const texto = count === 1 ? 'archivo' : 'archivos';
-      fileCounter.textContent = `${count} ${texto} cargado${count > 1 ? 's' : ''}`;
+    // Asignar al input (si viene de drag & drop es necesario hacer esto manual)
+    if (fileInput.files !== files) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
     }
   }
 
-  function updateInputFiles(configId, fileInput) {
-    if (!fileInput) return;
-    const dt = new DataTransfer();
-    (selectedFilesMap[configId] || []).forEach(f => dt.items.add(f));
-    fileInput.files = dt.files;
+  function validateFile(file) {
+    if (file.size > MAX_FILE_SIZE) return false;
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    return ALLOWED_EXTENSIONS.includes(ext);
   }
 
-  // Inicializar todas las áreas disponibles
-  UPLOAD_CONFIGS.forEach(cfg => initializeUploadArea(cfg.id));
+  function displayFile(suffix, file, container) {
+    const div = document.createElement('div');
+    div.className = 'file-item'; // Asegúrate de tener CSS para esto
+    div.style.display = 'flex';
+    div.style.alignItems = 'center';
+    div.style.justifyContent = 'space-between';
+    div.style.padding = '10px';
+    div.style.background = '#f8f9fa';
+    div.style.marginTop = '10px';
+    div.style.borderRadius = '5px';
+    div.style.border = '1px solid #ddd';
+
+    div.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px; overflow:hidden;">
+        <i class="fas fa-check-circle" style="color:#28a745;"></i>
+        <span style="font-size:0.9rem; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${file.name}</span>
+      </div>
+      <button type="button" style="background:none; border:none; color:#dc3545; cursor:pointer;">
+        <i class="fas fa-trash"></i>
+      </button>
+    `;
+
+    // Botón eliminar
+    div.querySelector('button').addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById(`fileInput${suffix}`).value = '';
+        container.innerHTML = '';
+    });
+
+    container.appendChild(div);
+  }
+
+  // Iniciar todos los listeners
+  UPLOAD_CONFIGS.forEach(suffix => initializeUploadArea(suffix));
+
 });
-// ...existing code...

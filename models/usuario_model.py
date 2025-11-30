@@ -87,3 +87,73 @@ def obtener_password_hash(usuario_id):
     finally:
         if conn: # CORRECCIÓN 2: Verificar si existe antes de cerrar
             conn.close()
+
+# EN models/usuario_model.py
+
+def actualizar_password(usuario_id, nuevo_hash):
+    """Actualizar contraseña del usuario"""
+    conn = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE usuarios SET password_hash = %s WHERE usuario_id = %s", (nuevo_hash, usuario_id))
+        conn.commit()
+        return True
+    except DatabaseError as e:
+        print(f"Error al actualizar password: {e}")
+        if conn: conn.rollback()
+        return False
+    finally:
+        if conn: conn.close()
+
+def verificar_password_actual(usuario_id, password_plano):
+    """Verificar si la contraseña actual es correcta antes de cambiarla"""
+    from werkzeug.security import check_password_hash
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT password_hash FROM usuarios WHERE usuario_id = %s", (usuario_id,))
+        res = cursor.fetchone()
+        if res:
+            return check_password_hash(res['password_hash'], password_plano)
+        return False
+    except Exception as e:
+        print(f"Error verificando password: {e}")
+        return False
+    finally:
+        if conn: conn.close()
+
+# EN models/usuario_model.py
+
+def actualizar_password(usuario_id, nuevo_hash):
+    """Actualizar contraseña del usuario"""
+    conn = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE usuarios SET password_hash = %s WHERE usuario_id = %s", (nuevo_hash, usuario_id))
+        conn.commit()
+        return True
+    except DatabaseError as e:
+        print(f"Error al actualizar password: {e}")
+        if conn: conn.rollback()
+        return False
+    finally:
+        if conn: conn.close()
+
+def verificar_password_actual(usuario_id, password_plano):
+    """Verificar si la contraseña actual es correcta antes de cambiarla"""
+    from werkzeug.security import check_password_hash
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT password_hash FROM usuarios WHERE usuario_id = %s", (usuario_id,))
+        res = cursor.fetchone()
+        if res:
+            return check_password_hash(res['password_hash'], password_plano)
+        return False
+    except Exception as e:
+        print(f"Error verificando password: {e}")
+        return False
+    finally:
+        if conn: conn.close()

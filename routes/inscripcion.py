@@ -10,7 +10,7 @@ from utils.decorators import login_requerido, tutor_requerido
 
 inscripcion_bp = Blueprint("inscripcion", __name__)
 
-@inscripcion_bp.route("/inscripcion")
+@inscripcion_bp.route("/reinscripcion")
 @login_requerido
 @tutor_requerido
 def inscripcion():

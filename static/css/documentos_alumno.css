@@ -257,6 +257,14 @@
       font-size: 0.7rem;
       font-weight: 600;
     }
+
+/* Estado Vencido */
+.status-vencido {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
     @media (max-width: 768px) {
       .progress-stats {
         flex-wrap: wrap;

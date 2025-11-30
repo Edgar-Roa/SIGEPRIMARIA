@@ -90,3 +90,67 @@ def tutor_existe(usuario_id):
         return False
     finally:
         conn.close()
+
+# EN models/tutor_model.py
+
+def actualizar_datos_tutor(usuario_id, nombre, ap_pat, ap_mat, telefono, correo):
+    """Actualizar datos generales del tutor y su usuario asociado"""
+    conn = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # 1. Actualizar tabla de usuarios (Correo y Nombres base)
+        cursor.execute("""
+            UPDATE usuarios 
+            SET nombre = %s, apellido_paterno = %s, apellido_materno = %s, correo = %s
+            WHERE usuario_id = %s
+        """, (nombre, ap_pat, ap_mat, correo, usuario_id))
+        
+        # 2. Actualizar tabla de tutores (Teléfono y datos espejo)
+        cursor.execute("""
+            UPDATE tutores 
+            SET nombre = %s, apellido_paterno = %s, apellido_materno = %s, telefono = %s, correo = %s
+            WHERE usuario_id = %s
+        """, (nombre, ap_pat, ap_mat, telefono, correo, usuario_id))
+        
+        conn.commit()
+        return True
+    except DatabaseError as e:
+        print(f"Error al actualizar tutor: {e}")
+        if conn: conn.rollback()
+        return False
+    finally:
+        if conn: conn.close()
+
+# EN models/tutor_model.py
+
+def actualizar_datos_tutor(usuario_id, nombre, ap_pat, ap_mat, telefono, correo):
+    """Actualizar datos generales del tutor y su usuario asociado"""
+    conn = None
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # 1. Actualizar tabla de usuarios (Correo y Nombres base)
+        cursor.execute("""
+            UPDATE usuarios 
+            SET nombre = %s, apellido_paterno = %s, apellido_materno = %s, correo = %s
+            WHERE usuario_id = %s
+        """, (nombre, ap_pat, ap_mat, correo, usuario_id))
+        
+        # 2. Actualizar tabla de tutores (Teléfono y datos espejo)
+        cursor.execute("""
+            UPDATE tutores 
+            SET nombre = %s, apellido_paterno = %s, apellido_materno = %s, telefono = %s, correo = %s
+            WHERE usuario_id = %s
+        """, (nombre, ap_pat, ap_mat, telefono, correo, usuario_id))
+        
+        conn.commit()
+        return True
+    except DatabaseError as e:
+        print(f"Error al actualizar tutor: {e}")
+        if conn: conn.rollback()
+        return False
+    finally:
+        if conn: conn.close()

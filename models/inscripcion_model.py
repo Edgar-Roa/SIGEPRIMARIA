@@ -138,14 +138,15 @@ def obtener_grados():
         return []
     finally:
         conn.close()
+# EN models/inscripcion_model.py
 
 def verificar_documentos_completos(alumno_id):
-    """Verificar si el alumno tiene todos los documentos requeridos validados"""
+    """Verificar si el alumno tiene todos los documentos requeridos validados y vigentes"""
     try:
         conn = get_connection()
         cursor = conn.cursor()
         
-        # Contar documentos requeridos
+        # 1. Contar cuántos tipos de documentos son requeridos
         cursor.execute("""
             SELECT COUNT(*) as total
             FROM tipos_documento 
@@ -153,7 +154,8 @@ def verificar_documentos_completos(alumno_id):
         """)
         total_requeridos = cursor.fetchone()['total']
         
-        # Contar documentos validados
+        # 2. Contar cuántos tiene el alumno que sean VÁLIDOS y VIGENTES
+        # Se agrega la lógica de 3 meses para 'comprobante_dom'
         cursor.execute("""
             SELECT COUNT(*) as validados
             FROM documento_alumno da
@@ -161,16 +163,25 @@ def verificar_documentos_completos(alumno_id):
             WHERE da.alumno_id = %s 
             AND td.requerido = TRUE 
             AND da.status = 'validado'
+            AND (
+                -- Si NO es comprobante, pasa directo
+                td.codigo != 'comprobante_dom' 
+                OR 
+                -- Si ES comprobante, debe ser reciente (menos de 3 meses)
+                da.fecha_subida >= (CURRENT_DATE - INTERVAL '3 months')
+            )
         """, (alumno_id,))
+        
         total_validados = cursor.fetchone()['validados']
         
+        # Si tiene todos los requeridos al día, retorna True
         return total_validados >= total_requeridos
         
     except DatabaseError as e:
         print(f"Error al verificar documentos: {e}")
         return False
     finally:
-        conn.close()
+        if conn: conn.close()
 
 def puede_inscribirse_alumno(alumno_id, escuela_id):
     """Verificar si un alumno puede inscribirse en una escuela"""
