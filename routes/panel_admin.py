@@ -10,6 +10,19 @@ from models.inscripcion_model import (
 from utils.decorators import login_requerido
 from functools import wraps
 from models.escuela_model import registrar_escuela_bd
+import json
+from models.inscripcion_model import (
+    obtener_inscripciones_pendientes,
+    cambiar_estado_inscripcion,
+    obtener_grupos_disponibles,
+    obtener_estadisticas_inscripciones,
+    obtener_inscripcion_detalle,
+    obtener_todas_inscripciones,
+    obtener_conteo_por_grado # <--- NUEVA IMPORTACIÓN
+)
+from models.usuario_model import registrar_usuario, correo_existe
+from models.escuela_model import obtener_todas_escuelas_mapa # Para llenar el select de escuelas
+from werkzeug.security import generate_password_hash
 
 panel_admin_bp = Blueprint("panel_admin", __name__)
 
@@ -169,7 +182,9 @@ def registrar_escuela_route():
                 'direccion': request.form.get('direccion'),
                 'municipio': request.form.get('municipio'),
                 'entidad': request.form.get('entidad'),
-                'telefono': request.form.get('telefono')
+                'telefono': request.form.get('telefono'),
+                'latitud': request.form.get('latitud'),
+                'longitud': request.form.get('longitud')
             }
 
             # 3. Guardar
@@ -186,3 +201,104 @@ def registrar_escuela_route():
             flash("Ocurrió un error interno.", "error")
 
     return render_template('registrar_escuela.html')
+
+@panel_admin_bp.route("/admin/registrar-usuario", methods=["GET", "POST"])
+@login_requerido
+@admin_requerido
+def registrar_usuario_admin():
+    # Solo SEP Admin puede registrar directores/admins
+    if session.get('rol') != 'sep_admin':
+        flash("Acceso no autorizado.", "error")
+        return redirect(url_for('panel_admin.panel_admin'))
+
+    # Obtener escuelas para el select (si registra un director)
+    # Usamos la función que ya tenías o creamos una simple que traiga ID y Nombre
+    escuelas = obtener_todas_escuelas_mapa() 
+
+    if request.method == "POST":
+        nombre = request.form.get("nombre", "").strip()
+        ap_pat = request.form.get("apellido_paterno", "").strip()
+        ap_mat = request.form.get("apellido_materno", "").strip()
+        correo = request.form.get("correo", "").strip().lower()
+        password = request.form.get("password", "")
+        rol_asignar = request.form.get("rol", "")
+        escuela_id = request.form.get("escuela_id")
+
+        # Validaciones
+        if not all([nombre, ap_pat, correo, password, rol_asignar]):
+            flash("Faltan datos obligatorios.", "error")
+            return render_template("registrar_usuario_admin.html", escuelas=escuelas)
+
+        if correo_existe(correo):
+            flash("El correo ya está registrado.", "error")
+            return render_template("registrar_usuario_admin.html", escuelas=escuelas)
+
+        # Validar Director sin Escuela
+        if rol_asignar == 'director' and not escuela_id:
+            flash("Debes asignar una escuela al Director.", "error")
+            return render_template("registrar_usuario_admin.html", escuelas=escuelas)
+
+        try:
+            # 1. Crear Usuario
+            pw_hash = generate_password_hash(password)
+            nuevo_usuario_id = registrar_usuario(nombre, ap_pat, ap_mat, correo, pw_hash, rol_asignar)
+
+            if nuevo_usuario_id:
+                # 2. Lógica Especial: Si es Director, actualizar la escuela
+                if rol_asignar == 'director' and escuela_id:
+                    from models.database import get_connection
+                    conn = get_connection()
+                    cursor = conn.cursor()
+                    # Asignar este usuario como director de la escuela seleccionada
+                    cursor.execute("UPDATE escuelas SET director_usuario_id = %s WHERE escuela_id = %s", (nuevo_usuario_id, escuela_id))
+                    conn.commit()
+                    conn.close()
+                    flash(f"Director registrado y asignado a la escuela correctamente.", "success")
+                else:
+                    flash(f"Usuario {rol_asignar} registrado exitosamente.", "success")
+                
+                return redirect(url_for('panel_admin.panel_admin'))
+            else:
+                flash("Error al crear usuario en BD.", "error")
+
+        except Exception as e:
+            print(f"Error registro admin: {e}")
+            flash("Error interno al registrar.", "error")
+
+    return render_template("registrar_usuario_admin.html", escuelas=escuelas)
+
+@panel_admin_bp.route("/admin/estadisticas")
+@login_requerido
+@admin_requerido
+def ver_estadisticas():
+    rol = session.get('rol')
+    escuela_id = session.get('escuela_id') if rol == 'director' else None
+    
+    # A. Obtener datos generales (Pastel)
+    # Usamos la función que ya tenías: obtener_estadisticas_inscripciones
+    stats_general = obtener_estadisticas_inscripciones(escuela_id)
+    
+    # B. Obtener datos por grado (Barras)
+    stats_grados = obtener_conteo_por_grado(escuela_id)
+    
+    # C. Preparar datos para Chart.js (JSON)
+    data_pastel = {
+        'labels': ['Aceptados', 'Pendientes', 'En Revisión', 'Rechazados'],
+        'data': [
+            stats_general['aceptados'] or 0,
+            stats_general['pendientes'] or 0,
+            stats_general['en_revision'] or 0,
+            stats_general['rechazados'] or 0
+        ]
+    }
+    
+    data_barras = {
+        'labels': [g['descripcion'] for g in stats_grados],
+        'data': [g['total'] for g in stats_grados]
+    }
+
+    return render_template(
+        'graficas_admin.html',
+        data_pastel=json.dumps(data_pastel),
+        data_barras=json.dumps(data_barras)
+    )

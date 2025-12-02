@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Usuario - Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/headers_footers.css">
+  <link rel="stylesheet" href="/static/css/registrar_escuela.css"> <link rel="stylesheet" href="/static/css/registro_alumno.css"> </head>
+<body>
+
+  <header class="header">
+    <div class="logo-container"><img src="/static/imagenes/logo2.jpg" alt="Logo"></div>
+    <nav class="main-nav"><a href="#">Trámites</a></nav>
+  </header>
+  
+  <div class="subheader">
+    <a href="{{url_for('inicio.inicio')}}">SIGEPRIMARIA</a>
+    <a href="{{url_for('panel_admin.panel_admin')}}">Panel Admin</a>
+    <a href="#">Registrar Usuario</a>
+  </div>
+
+  <div class="main-wrapper">
+    <div class="page-header">
+      <h1><i class="fas fa-user-plus"></i> Alta de Usuario Administrativo</h1>
+      <a href="{{ url_for('panel_admin.panel_admin') }}" class="btn btn-secondary">Volver</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}" style="padding:15px; margin-bottom:20px; border-radius:8px; background: #f8d7da; color:#721c24;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-container">
+        
+        <h2 class="section-title">Datos del Usuario</h2>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>Nombre <span style="color:red">*</span></label>
+                <input type="text" name="nombre" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Apellido Paterno <span style="color:red">*</span></label>
+                <input type="text" name="apellido_paterno" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Apellido Materno</label>
+                <input type="text" name="apellido_materno" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Correo Electrónico <span style="color:red">*</span></label>
+                <input type="email" name="correo" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Contraseña Temporal <span style="color:red">*</span></label>
+                <input type="text" name="password" class="form-control" required value="Sige2025!" placeholder="Mínimo 6 caracteres">
+                <small style="color:#666;">El usuario podrá cambiarla después.</small>
+            </div>
+        </div>
+
+        <h2 class="section-title">Permisos y Asignación</h2>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>Rol de Usuario <span style="color:red">*</span></label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user-tag"></i>
+                    <select name="rol" id="rol_select" class="form-control modern-select" required onchange="toggleEscuela()">
+                        <option value="">-- Seleccionar Rol --</option>
+                        <option value="director">Director de Escuela</option>
+                        <option value="sep_admin">Administrador SEP</option>
+                        <option value="docente">Docente</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" id="bloque_escuela" style="display:none;">
+                <label>Asignar a Escuela <span style="color:red">*</span></label>
+                <div class="input-wrapper">
+                    <i class="fas fa-school"></i>
+                    <select name="escuela_id" id="escuela_id" class="form-control modern-select">
+                        <option value="">-- Seleccionar Escuela --</option>
+                        {% for escuela in escuelas %}
+                        <option value="{{ escuela.cct }}">{{ escuela.nombre }} ({{ escuela.cct }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <small style="color:#d9534f;">Esto asignará al usuario como Director de esta escuela.</small>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Registrar Usuario</button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function toggleEscuela() {
+        const rol = document.getElementById('rol_select').value;
+        const bloque = document.getElementById('bloque_escuela');
+        const selectEscuela = document.getElementById('escuela_id');
+
+        if (rol === 'director') {
+            bloque.style.display = 'flex';
+            selectEscuela.setAttribute('required', 'required');
+        } else {
+            bloque.style.display = 'none';
+            selectEscuela.removeAttribute('required');
+            selectEscuela.value = "";
+        }
+    }
+  </script>
+
+</body>
+</html>

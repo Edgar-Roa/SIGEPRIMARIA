@@ -385,3 +385,37 @@ def obtener_todas_inscripciones(escuela_id=None, filtro_status=None):
         return []
     finally:
         conn.close()
+
+# EN models/inscripcion_model.py
+
+def obtener_conteo_por_grado(escuela_id=None):
+    """Obtener cantidad de alumnos aceptados por grado para gráficas"""
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Consulta base
+        query = """
+            SELECT g.descripcion, COUNT(i.alumno_id) as total
+            FROM grados g
+            LEFT JOIN inscripciones i ON g.grado_id = i.grado_id 
+                AND i.status = 'aceptado'
+                AND i.ciclo_id = (SELECT ciclo_id FROM ciclos WHERE activo = TRUE LIMIT 1)
+        """
+        params = []
+        
+        # Si es director, filtrar por su escuela
+        if escuela_id:
+            query += " AND i.escuela_id = %s"
+            params.append(escuela_id)
+            
+        query += " GROUP BY g.grado_id, g.descripcion ORDER BY g.grado_id"
+        
+        cursor.execute(query, params)
+        return cursor.fetchall()
+        
+    except DatabaseError as e:
+        print(f"Error estadísticas grados: {e}")
+        return []
+    finally:
+        if conn: conn.close()

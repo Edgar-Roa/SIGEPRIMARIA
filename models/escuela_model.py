@@ -223,16 +223,20 @@ def registrar_escuela_bd(datos):
         cursor.execute("""
             INSERT INTO escuelas (
                 cct, nombre, turno, zona_escolar, cupo_total, 
-                direccion, municipio, entidad, telefono, activo
+                direccion, municipio, entidad, telefono, activo,
+                latitud, longitud
             ) VALUES (
                 %s, %s, %s, %s, %s, 
-                %s, %s, %s, %s, TRUE
+                %s, %s, %s, %s, TRUE,
+                %s, %s
             )
             RETURNING escuela_id
         """, (
             datos['cct'], datos['nombre'], datos['turno'], datos['zona_escolar'],
             datos['cupo_total'], datos['direccion'], datos['municipio'], 
-            datos['entidad'], datos['telefono']
+            datos['entidad'], datos['telefono'],
+            float(datos['latitud']),
+            float(datos['longitud'])
         ))
         
         resultado = cursor.fetchone()

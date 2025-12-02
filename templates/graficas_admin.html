@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas - SIGEPRIMARIA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/headers_footers.css">
+    <style>
+        body { background: #f5f7fa; font-family: 'Montserrat', sans-serif; }
+        .main-wrapper { max-width: 1200px; margin: 30px auto; padding: 20px; }
+        
+        .page-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: white; padding: 20px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid #9d2449;
+        }
+        .page-header h1 { margin: 0; color: #9d2449; }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        
+        .chart-card {
+            background: white; padding: 25px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .chart-card h3 { text-align: center; color: #555; margin-bottom: 20px; }
+        
+        .btn-back {
+            background: #6c757d; color: white; text-decoration: none;
+            padding: 10px 20px; border-radius: 5px; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container"><img src="/static/imagenes/logo2.jpg" alt="Logo"></div>
+    </header>
+
+    <div class="main-wrapper">
+        <div class="page-header">
+            <h1><i class="fas fa-chart-pie"></i> Tablero de Estadísticas</h1>
+            <a href="{{ url_for('panel_admin.panel_admin') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Estatus de Inscripciones</h3>
+                <canvas id="chartStatus"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <h3>Alumnos Inscritos por Grado</h3>
+                <canvas id="chartGrados"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // 1. Obtener datos de Python
+        const datosPastel = JSON.parse('{{ data_pastel | safe }}');
+        const datosBarras = JSON.parse('{{ data_barras | safe }}');
+
+        // 2. Configurar Gráfica de Pastel
+        new Chart(document.getElementById('chartStatus'), {
+            type: 'doughnut',
+            data: {
+                labels: datosPastel.labels,
+                datasets: [{
+                    data: datosPastel.data,
+                    backgroundColor: ['#28a745', '#ffc107', '#17a2b8', '#dc3545'],
+                    borderWidth: 0
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        // 3. Configurar Gráfica de Barras
+        new Chart(document.getElementById('chartGrados'), {
+            type: 'bar',
+            data: {
+                labels: datosBarras.labels,
+                datasets: [{
+                    label: 'Alumnos',
+                    data: datosBarras.data,
+                    backgroundColor: '#9d2449',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+</body>
+</html>

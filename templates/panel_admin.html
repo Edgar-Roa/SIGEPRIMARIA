@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Administración - SIGEPRIMARIA</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="/static/css/header.css">
-  <link rel="stylesheet" href="/static/css/sub_header.css">
-  <link rel="stylesheet" href="/static/css/footer.css">
+  <link rel="stylesheet" href="/static/css/headers_footers.css">
   <style>
     * {
       margin: 0;
@@ -288,13 +286,26 @@
           <p>Gestiona y revisa las solicitudes de inscripción</p>
         </div>
 
-        {% if rol == 'sep_admin' %}
-        <div class="admin-actions">
-          <a href="{{ url_for('panel_admin.registrar_escuela_route') }}" class="btn btn-primary" style="background-color: #13322b;">
-            <i class="fas fa-plus-circle"></i> Registrar Escuela
-          </a>
+<div class="admin-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            
+            <a href="{{ url_for('panel_admin.ver_estadisticas') }}" class="btn btn-info" style="background-color: #007bff; color: white;">
+                <i class="fas fa-chart-bar"></i> Ver Estadísticas
+            </a>
+
+            {% if rol == 'sep_admin' %}
+            <a href="{{ url_for('panel_admin.registrar_escuela_route') }}" class="btn btn-primary" style="background-color: #13322b;">
+                <i class="fas fa-plus-circle"></i> Registrar Escuela
+            </a>
+            <a href="{{ url_for('panel_admin.registrar_usuario_admin') }}" class="btn btn-secondary" style="background-color: #28a745; color: white;">
+                <i class="fas fa-user-plus"></i> Registrar Usuario
+            </a>
+            {% endif %}
+            
+            <a href="{{ url_for('iniciar_sesion.logout') }}" class="btn btn-secondary" style="background-color: #dc3545; color: white;">
+                <i class="fas fa-sign-out-alt"></i> Salir
+            </a>
+
         </div>
-        {% endif %}
       </div>
     </div>
 
