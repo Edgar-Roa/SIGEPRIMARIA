@@ -10,6 +10,17 @@ load_dotenv()
 application = Flask(__name__)
 application.secret_key = os.getenv('SECRET_KEY', 'clave_por_defecto_segura')
 
+@application.after_request
+def add_header(response):
+    """
+    Agrega cabeceras para que el navegador NO guarde las páginas en caché.
+    Esto evita que al dar 'Atrás' después de logout se vea la página anterior.
+    """
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 
 CORS(application)
 
