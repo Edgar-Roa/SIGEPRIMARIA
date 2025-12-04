@@ -10,6 +10,8 @@ load_dotenv()
 application = Flask(__name__)
 application.secret_key = os.getenv('SECRET_KEY', 'clave_por_defecto_segura')
 
+CORS(application)
+
 @application.after_request
 def add_header(response):
     """
@@ -20,10 +22,6 @@ def add_header(response):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
-
-
-CORS(application)
-
 
 from routes.inicio import inicio_bp
 from routes.iniciar_sesion import iniciar_sesion_bp
