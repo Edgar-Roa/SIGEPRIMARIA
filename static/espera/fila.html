@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala de Espera - SIGEPRIMARIA</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            border-top: 6px solid #9d2449; /* Guinda oficial */
+        }
+        h1 { color: #9d2449; }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #bc955c; /* Dorado oficial */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    <script>
+        // Intentar recargar cada 10 segundos para ver si ya hay lugar
+        setTimeout(function(){
+            window.location.reload();
+        }, 10000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="loader"></div>
+        <h1>Fila Virtual</h1>
+        <p>Nuestros servidores tienen una alta demanda en este momento.</p>
+        <p><strong>Por favor, no cierres esta ventana.</strong><br>Te daremos acceso automáticamente en unos segundos.</p>
+    </div>
+</body>
+</html>
