@@ -3,52 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sala de Espera - SIGEPRIMARIA</title>
+    <title>Sala de Espera - Administración</title>
     <style>
-        body {
-            font-family: sans-serif;
-            background-color: #f4f4f4;
+body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
             color: #333;
+            
+            /* --- IMAGEN DE FONDO --- */
+            /* La ruta /static funciona gracias a Nginx */
+            background-image: url('/static/imagenes/fondo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
-        .container {
+        .card {
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
             max-width: 500px;
-            border-top: 6px solid #9d2449; /* Guinda oficial */
+            border-top: 6px solid #9d2449; /* Guinda */
         }
-        h1 { color: #9d2449; }
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #bc955c; /* Dorado oficial */
-            border-radius: 50%;
+        h1 { color: #9d2449; margin-bottom: 10px; font-size: 1.5rem; }
+        p { font-size: 1rem; color: #666; line-height: 1.5; }
+        
+        /* Loader animado */
+        .spinner {
             width: 50px;
             height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #bc955c; /* Dorado */
+            border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .status-text { font-size: 0.9rem; color: #888; margin-top: 15px; }
     </style>
     <script>
-        // Intentar recargar cada 10 segundos para ver si ya hay lugar
+        // Recargar automáticamente cada 5 segundos para intentar entrar
         setTimeout(function(){
             window.location.reload();
-        }, 10000);
+        }, 5000);
     </script>
 </head>
 <body>
-    <div class="container">
-        <div class="loader"></div>
-        <h1>Fila Virtual</h1>
-        <p>Nuestros servidores tienen una alta demanda en este momento.</p>
-        <p><strong>Por favor, no cierres esta ventana.</strong><br>Te daremos acceso automáticamente en unos segundos.</p>
+    <div class="card">
+        <div class="spinner"></div>
+        <h1>Alta Demanda en el Servidor</h1>
+        <p>Estamos procesando múltiples registros de escuelas en este momento.</p>
+        <p>Tu lugar está reservado. Serás redirigido automáticamente al formulario en unos segundos.</p>
+        <div class="status-text">Reintentando conexión...</div>
     </div>
 </body>
 </html>
